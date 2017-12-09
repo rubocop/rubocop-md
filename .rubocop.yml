@@ -1,0 +1,40 @@
+AllCops:
+  Include:
+    - 'lib/**/*.rb'
+    - 'lib/**/*.rake'
+    - 'test/**/*.rb'
+  Exclude:
+    - 'bin/**/*'
+    - 'vendor/**/*'
+    - 'tmp/**/*'
+    - 'Rakefile'
+    - 'Gemfile'
+    - '*.gemspec'
+  DisplayCopNames: true
+  StyleGuideCopsOnly: false
+  TargetRubyVersion: 2.2
+
+Rails:
+  Enabled: false
+
+Style/Documentation:
+  Exclude:
+    - 'test/**/*.rb'
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/RegexpLiteral:
+  Enabled: false
+
+Style/ClassAndModuleChildren:
+  Exclude:
+    - 'test/**/*.rb'
+
+Layout/SpaceInsideStringInterpolation:
+  EnforcedStyle: no_space
+
+Metrics/LineLength:
+  Max: 100
+  Exclude:
+    - 'test/**/*.rb'

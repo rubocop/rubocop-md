@@ -1,0 +1,2 @@
+bump:
+  file: lib/rubocop/md/version.rb
