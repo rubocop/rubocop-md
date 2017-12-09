@@ -1,2 +1,2 @@
 bump:
-  file: lib/rubocop/md/version.rb
+  file: lib/rubocop/markdown/version.rb

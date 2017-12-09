@@ -38,3 +38,11 @@ Metrics/LineLength:
   Max: 100
   Exclude:
     - 'test/**/*.rb'
+
+Metrics/MethodLength:
+  Exclude:
+    - 'test/**/*.rb'
+
+Metrics/ClassLength:
+  Exclude:
+    - 'test/**/*.rb'
