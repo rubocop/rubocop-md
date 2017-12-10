@@ -8,12 +8,22 @@ Layout/LeadingCommentSpace:
     - '**/*.md'
     - '**/*.markdown'
 
+Layout/TrailingBlankLines:
+  Exclude:
+    - '**/*.md'
+    - '**/*.markdown'
+
 Style/AsciiComments:
   Exclude:
     - '**/*.md'
     - '**/*.markdown'
 
 Style/CommentAnnotation:
+  Exclude:
+    - '**/*.md'
+    - '**/*.markdown'
+
+Style/Documentation:
   Exclude:
     - '**/*.md'
     - '**/*.markdown'

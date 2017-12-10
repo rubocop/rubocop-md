@@ -188,4 +188,56 @@ class RuboCop::Markdown::PreprocessTest < Minitest::Test
 
     assert_equal expected, described_module.call(source)
   end
+
+  def test_ambigious_non_ruby_snippet
+    source = <<-SOURCE.squiggly
+      # Header
+
+      ```ruby
+      it "is doing heavy stuff", :rprof do
+        ...
+      end
+      ```
+
+      Code example:
+
+      ```sh
+      TEST_RUBY_PROF=call_stack bundle exec rake test
+      ```
+
+      Or in your code:
+
+      ```ruby
+      TestProf::RubyProf.configure do |config|
+        config.printer = :call_stack
+      end
+      ```
+    SOURCE
+
+    expected = <<-SOURCE.squiggly
+      ## Header
+      #
+      #```ruby
+      #it "is doing heavy stuff", :rprof do
+      #  ...
+      #end
+      #```
+      #
+      #Code example:
+      #
+      #```sh
+      #TEST_RUBY_PROF=call_stack bundle exec rake test
+      #```
+      #
+      #Or in your code:
+      #
+      #```ruby
+      TestProf::RubyProf.configure do |config|
+        config.printer = :call_stack
+      end
+      #```
+    SOURCE
+
+    assert_equal expected, described_module.call(source)
+  end
 end

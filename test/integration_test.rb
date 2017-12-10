@@ -19,12 +19,19 @@ class RuboCop::Markdown::IntegrationTest < Minitest::Test
     assert_match %r{Style/StringLiterals}, res
   end
 
-  def test_multiple_snippets
+  def test_multiple_snippets_file
     res = run_rubocop("multiple_snippets.markdown")
 
     assert_match %r{Inspecting 1 file}, res
     assert_match %r{4 offenses detected}, res
     assert_match %r{Layout/SpaceAfterComma}, res
     assert_match %r{Layout/SpaceInsideBlockBraces}, res
+  end
+
+  def test_multiple_invalid_snippets_file
+    res = run_rubocop("multiple_invalid_snippets.md")
+
+    assert_match %r{Inspecting 1 file}, res
+    assert_match %r{no offenses detected}, res
   end
 end

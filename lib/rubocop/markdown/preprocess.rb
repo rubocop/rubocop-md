@@ -12,6 +12,16 @@ module RuboCop
       # Try it: http://rubular.com/r/iJaKBkSrrT
       MD_REGEXP = /^([ \t]*`{3,4})([\w[[:blank:]]]*\n)([\s\S]+?)(^[ \t]*\1[[:blank:]]*\n)/m
 
+      # See https://github.com/github/linguist/blob/v5.3.3/lib/linguist/languages.yml#L3925
+      RUBY_TYPES = %w[
+        ruby
+        jruby
+        macruby
+        rake
+        rb
+        rbx
+      ].freeze
+
       class Walker # :nodoc:
         STEPS = %i[text code_start code_attr code_body code_end].freeze
 
@@ -41,10 +51,13 @@ module RuboCop
 
           parts.each do |part|
             if walker.code_body?
-              next walker.next! if valid_syntax?(part)
+              next walker.next! if maybe_ruby?(@syntax) && valid_syntax?(part)
             end
 
-            next walker.next! if walker.code_attr?
+            if walker.code_attr?
+              @syntax = part.gsub(/(^\s+|\s+$)/, "")
+              next walker.next!
+            end
 
             comment_lines! part
 
@@ -56,6 +69,12 @@ module RuboCop
         # rubocop:enable Metrics/MethodLength
 
         private
+
+        # Check codeblock attribute to prevent from parsing
+        # non-Ruby snippets and avoid false positives
+        def maybe_ruby?(syntax)
+          syntax.empty? || RUBY_TYPES.include?(syntax)
+        end
 
         # Try to parse with Ripper.
         # Invalid Ruby (non-Ruby) code returns `nil`.
