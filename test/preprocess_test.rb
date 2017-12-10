@@ -2,9 +2,9 @@ require "test_helper"
 
 using SquigglyHeredoc
 
-class Rubocop::Markdown::PreprocessTest < Minitest::Test
+class RuboCop::Markdown::PreprocessTest < Minitest::Test
   def described_module
-    Rubocop::Markdown::Preprocess
+    RuboCop::Markdown::Preprocess
   end
 
   def test_no_code_snippets

@@ -1,0 +1,28 @@
+Layout/CommentIndentation:
+  Exclude:
+    - '**/*.md'
+    - '**/*.markdown'
+
+Layout/LeadingCommentSpace:
+  Exclude:
+    - '**/*.md'
+    - '**/*.markdown'
+
+Style/AsciiComments:
+  Exclude:
+    - '**/*.md'
+    - '**/*.markdown'
+
+Style/CommentAnnotation:
+  Exclude:
+    - '**/*.md'
+    - '**/*.markdown'
+
+Style/FrozenStringLiteralComment:
+  Exclude:
+    - '**/*.md'
+    - '**/*.markdown'
+
+Metrics/LineLength:
+  IgnoredPatterns:
+    - !ruby/regexp /^\#/

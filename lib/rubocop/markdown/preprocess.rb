@@ -1,6 +1,6 @@
 require "ripper"
 
-module Rubocop
+module RuboCop
   module Markdown
     # Transform source Markdown file into valid Ruby file
     # by commenting out all non-code lines
