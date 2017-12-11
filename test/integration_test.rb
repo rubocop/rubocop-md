@@ -1,7 +1,8 @@
 require "test_helper"
 require "open3"
+require "fileutils"
 
-class RuboCop::Markdown::IntegrationTest < Minitest::Test
+module RuboCopRunner
   def run_rubocop(path, options: "")
     md_path = File.expand_path("../../lib/rubocop-md.rb", __FILE__)
     output, _status = Open3.capture2(
@@ -10,6 +11,10 @@ class RuboCop::Markdown::IntegrationTest < Minitest::Test
     )
     output
   end
+end
+
+class RuboCop::Markdown::AnalyzeTest < Minitest::Test
+  include RuboCopRunner
 
   def test_single_snippet_file
     res = run_rubocop("single_snippet.md")
@@ -43,5 +48,144 @@ class RuboCop::Markdown::IntegrationTest < Minitest::Test
 
     res_cached = run_rubocop("multiple_snippets.markdown", options: "--cache true")
     assert_includes res_cached, 'have_header("X-TOTAL-PAGES",10)'
+  end
+end
+
+class RuboCop::Markdown::AutocorrectTest < Minitest::Test
+  using SquigglyHeredoc
+  include RuboCopRunner
+
+  def fixture_name
+    @fixture_name ||= "autocorrect_test.md"
+  end
+
+  def fixture_file
+    @fixture_file ||= File.join(__dir__, "fixtures", fixture_name)
+  end
+
+  def prepare_test(contents)
+    File.write(fixture_file, contents)
+  end
+
+  def teardown
+    FileUtils.rm(fixture_file)
+  end
+
+  def test_autocorrect_single_snippet
+    prepare_test(
+      <<-CODE.squiggly
+        # Before All
+
+        Rails has a great feature – `transactional_tests`.
+
+        We can do something like this:
+
+        ```ruby
+        describe BeatleWeightedSearchQuery do
+          before(:each) do
+            @paul = create(:beatle, name: "Paul")
+            @john = create(:beatle, name: 'John')
+          end
+
+          # and about 15 examples here
+        end
+        ```
+      CODE
+    )
+
+    expected = <<-CODE.squiggly
+      # Before All
+
+      Rails has a great feature – `transactional_tests`.
+
+      We can do something like this:
+
+      ```ruby
+      describe BeatleWeightedSearchQuery do
+        before(:each) do
+          @paul = create(:beatle, name: "Paul")
+          @john = create(:beatle, name: "John")
+        end
+
+        # and about 15 examples here
+      end
+      ```
+    CODE
+
+    res = run_rubocop(fixture_name, options: "-a")
+    assert_match %r{1 offense detected}, res
+    assert_match %r{1 offense corrected}, res
+
+    assert_equal expected, File.read(fixture_file)
+  end
+
+  def test_autocorrect_multiple_snippets
+    prepare_test(
+      <<-CODE.squiggly
+        ```ruby
+        # bad
+        it { is_expected.to be_success }
+        it { is_expected.to have_header("X-TOTAL-PAGES",10) }
+        it {is_expected.to have_header("X-NEXT-PAGE", 2)}
+        ```
+
+        That's the better way:
+
+        ```
+        # good
+        it "returns the second page",:aggregate_failures do
+          is_expected.to be_success
+          is_expected.to have_header("X-TOTAL-PAGES", 10)
+          is_expected.to have_header("X-NEXT-PAGE", 2)
+        end
+        ```
+
+        To enable them:
+
+        - Require `test_prof/rubocop` in your RuboCop configuration:
+
+        ```yml
+        # .rubocop.yml
+        require:
+         - 'test_prof/rubocop'
+        ```
+      CODE
+    )
+
+    expected = <<-CODE.squiggly
+      ```ruby
+      # bad
+      it { is_expected.to be_success }
+      it { is_expected.to have_header("X-TOTAL-PAGES", 10) }
+      it { is_expected.to have_header("X-NEXT-PAGE", 2) }
+      ```
+
+      That's the better way:
+
+      ```
+      # good
+      it "returns the second page", :aggregate_failures do
+        is_expected.to be_success
+        is_expected.to have_header("X-TOTAL-PAGES", 10)
+        is_expected.to have_header("X-NEXT-PAGE", 2)
+      end
+      ```
+
+      To enable them:
+
+      - Require `test_prof/rubocop` in your RuboCop configuration:
+
+      ```yml
+      # .rubocop.yml
+      require:
+       - 'test_prof/rubocop'
+      ```
+    CODE
+
+    res = run_rubocop(fixture_name, options: "-a")
+    assert_match %r{4 offenses detected}, res
+    assert_match %r{4 offenses corrected}, res
+
+    assert_equal expected, File.read(fixture_file)
   end
 end

@@ -21,12 +21,22 @@ end
 
 RuboCop::Markdown.inject!
 
-# Do not cache markdown files, 'cause cache doesn't know about processing.
-# NOTE: we should involve preprocessing in RuboCop::CachedData#deserialize_offenses
 RuboCop::Runner.prepend(Module.new do
+  # Do not cache markdown files, 'cause cache doesn't know about processing.
+  # NOTE: we should involve preprocessing in RuboCop::CachedData#deserialize_offenses
   def file_offense_cache(file)
     return yield if RuboCop::Markdown.markdown_file?(file)
     super
+  end
+
+  # Run Preprocess.restore if file has been autocorrected
+  def process_file(file)
+    return super unless @options[:auto_correct] && RuboCop::Markdown.markdown_file?(file)
+
+    offenses = super
+    RuboCop::Markdown::Preprocess.restore!(file)
+
+    offenses
   end
 end)
 

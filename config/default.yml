@@ -18,12 +18,12 @@ Style/AsciiComments:
     - '**/*.md'
     - '**/*.markdown'
 
-Style/CommentAnnotation:
+Style/Documentation:
   Exclude:
     - '**/*.md'
     - '**/*.markdown'
 
-Style/Documentation:
+Style/CommentAnnotation:
   Exclude:
     - '**/*.md'
     - '**/*.markdown'

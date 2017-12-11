@@ -15,9 +15,9 @@ class RuboCop::Markdown::PreprocessTest < Minitest::Test
     SOURCE
 
     expected = <<-SOURCE.squiggly
-      ## Header
-      #
-      #Boby text
+      #<--rubocop/md--># Header
+      #<--rubocop/md-->
+      #<--rubocop/md-->Boby text
     SOURCE
 
     assert_equal expected, described_module.call(source)
@@ -39,17 +39,17 @@ class RuboCop::Markdown::PreprocessTest < Minitest::Test
     SOURCE
 
     expected = <<-SOURCE.squiggly
-      ## Header
-      #
-      #Code example:
-      #
-      #```
+      #<--rubocop/md--># Header
+      #<--rubocop/md-->
+      #<--rubocop/md-->Code example:
+      #<--rubocop/md-->
+      #<--rubocop/md-->```
       class Test < Minitest::Test
         def test_valid
           assert false
         end
       end
-      #```
+      #<--rubocop/md-->```
     SOURCE
 
     assert_equal expected, described_module.call(source)
@@ -67,13 +67,13 @@ class RuboCop::Markdown::PreprocessTest < Minitest::Test
     SOURCE
 
     expected = <<-SOURCE.squiggly
-      #```
+      #<--rubocop/md-->```
       class Test < Minitest::Test
         def test_valid
           assert false
         end
       end
-      #```
+      #<--rubocop/md-->```
     SOURCE
 
     assert_equal expected, described_module.call(source)
@@ -105,27 +105,27 @@ class RuboCop::Markdown::PreprocessTest < Minitest::Test
     SOURCE
 
     expected = <<-SOURCE.squiggly
-      ## Header
-      #
-      #Code example:
-      #
-      #```
+      #<--rubocop/md--># Header
+      #<--rubocop/md-->
+      #<--rubocop/md-->Code example:
+      #<--rubocop/md-->
+      #<--rubocop/md-->```
       class Test < Minitest::Test
         def test_valid
           assert false
         end
       end
-      #```
-      #
-      #More texts and lists:
-      #- One
-      #- Two
-      #
-      #```ruby
+      #<--rubocop/md-->```
+      #<--rubocop/md-->
+      #<--rubocop/md-->More texts and lists:
+      #<--rubocop/md-->- One
+      #<--rubocop/md-->- Two
+      #<--rubocop/md-->
+      #<--rubocop/md-->```ruby
       require "minitest/pride"
       require "minitest/autorun"
 
-      #```
+      #<--rubocop/md-->```
     SOURCE
 
     assert_equal expected, described_module.call(source)
@@ -147,17 +147,17 @@ class RuboCop::Markdown::PreprocessTest < Minitest::Test
     SOURCE
 
     expected = <<-SOURCE.squiggly
-      ## Header
-      #
-      #Code example:
-      #
-      #```
-      #class Test < Minitest::Test
-      #  def test_valid
-      #    ...
-      #  end
-      #end
-      #```
+      #<--rubocop/md--># Header
+      #<--rubocop/md-->
+      #<--rubocop/md-->Code example:
+      #<--rubocop/md-->
+      #<--rubocop/md-->```
+      #<--rubocop/md-->class Test < Minitest::Test
+      #<--rubocop/md-->  def test_valid
+      #<--rubocop/md-->    ...
+      #<--rubocop/md-->  end
+      #<--rubocop/md-->end
+      #<--rubocop/md-->```
     SOURCE
 
     assert_equal expected, described_module.call(source)
@@ -176,14 +176,14 @@ class RuboCop::Markdown::PreprocessTest < Minitest::Test
     SOURCE
 
     expected = <<-SOURCE.squiggly
-      ## Header
-      #
-      #Code example:
-      #
-      #```
-      #-module(evlms).
-      #-export([martians/0, martians/1]).
-      #```
+      #<--rubocop/md--># Header
+      #<--rubocop/md-->
+      #<--rubocop/md-->Code example:
+      #<--rubocop/md-->
+      #<--rubocop/md-->```
+      #<--rubocop/md-->-module(evlms).
+      #<--rubocop/md-->-export([martians/0, martians/1]).
+      #<--rubocop/md-->```
     SOURCE
 
     assert_equal expected, described_module.call(source)
@@ -215,27 +215,27 @@ class RuboCop::Markdown::PreprocessTest < Minitest::Test
     SOURCE
 
     expected = <<-SOURCE.squiggly
-      ## Header
-      #
-      #```ruby
-      #it "is doing heavy stuff", :rprof do
-      #  ...
-      #end
-      #```
-      #
-      #Code example:
-      #
-      #```sh
-      #TEST_RUBY_PROF=call_stack bundle exec rake test
-      #```
-      #
-      #Or in your code:
-      #
-      #```ruby
+      #<--rubocop/md--># Header
+      #<--rubocop/md-->
+      #<--rubocop/md-->```ruby
+      #<--rubocop/md-->it "is doing heavy stuff", :rprof do
+      #<--rubocop/md-->  ...
+      #<--rubocop/md-->end
+      #<--rubocop/md-->```
+      #<--rubocop/md-->
+      #<--rubocop/md-->Code example:
+      #<--rubocop/md-->
+      #<--rubocop/md-->```sh
+      #<--rubocop/md-->TEST_RUBY_PROF=call_stack bundle exec rake test
+      #<--rubocop/md-->```
+      #<--rubocop/md-->
+      #<--rubocop/md-->Or in your code:
+      #<--rubocop/md-->
+      #<--rubocop/md-->```ruby
       TestProf::RubyProf.configure do |config|
         config.printer = :call_stack
       end
-      #```
+      #<--rubocop/md-->```
     SOURCE
 
     assert_equal expected, described_module.call(source)

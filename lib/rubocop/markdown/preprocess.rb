@@ -12,6 +12,8 @@ module RuboCop
       # Try it: http://rubular.com/r/iJaKBkSrrT
       MD_REGEXP = /^([ \t]*`{3,4})([\w[[:blank:]]]*\n)([\s\S]+?)(^[ \t]*\1[[:blank:]]*\n)/m
 
+      MARKER = "<--rubocop/md-->".freeze
+
       # See https://github.com/github/linguist/blob/v5.3.3/lib/linguist/languages.yml#L3925
       RUBY_TYPES = %w[
         ruby
@@ -68,6 +70,18 @@ module RuboCop
         end
         # rubocop:enable Metrics/MethodLength
 
+        # Revert preprocess changes.
+        #
+        # When autocorrect is applied, RuboCop re-writes the file
+        # using preproccessed source buffer.
+        #
+        # We have to restore it.
+        def restore!(file)
+          contents = File.read(file)
+          contents.gsub!(/^##{MARKER}/m, "")
+          File.write(file, contents)
+        end
+
         private
 
         # Check codeblock attribute to prevent from parsing
@@ -84,7 +98,7 @@ module RuboCop
 
         def comment_lines!(src)
           return if src =~ /\A\n\z/
-          src.gsub!(/^(.)/m, '#\1')
+          src.gsub!(/^(.)/m, "##{MARKER}\\1")
         end
       end
     end
