@@ -34,4 +34,14 @@ class RuboCop::Markdown::IntegrationTest < Minitest::Test
     assert_match %r{Inspecting 1 file}, res
     assert_match %r{no offenses detected}, res
   end
+
+  def test_with_cache
+    res = run_rubocop("multiple_snippets.markdown", options: "--cache true")
+    assert_match %r{Inspecting 1 file}, res
+    assert_match %r{4 offenses detected}, res
+    assert_includes res, 'have_header("X-TOTAL-PAGES",10)'
+
+    res_cached = run_rubocop("multiple_snippets.markdown", options: "--cache true")
+    assert_includes res_cached, 'have_header("X-TOTAL-PAGES",10)'
+  end
 end
