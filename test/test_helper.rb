@@ -2,7 +2,10 @@ $LOAD_PATH.unshift File.expand_path("../../lib", __FILE__)
 require "rubocop"
 require "rubocop-md"
 
-require "pry-byebug" rescue LoadError # rubocop:disable all
+begin
+  require "pry-byebug"
+rescue LoadError # rubocop:disable Lint/HandleExceptions
+end
 
 RuboCop::Markdown.config_store = RuboCop::ConfigStore.new
 

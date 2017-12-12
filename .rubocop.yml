@@ -31,6 +31,9 @@ Style/ClassAndModuleChildren:
   Exclude:
     - 'test/**/*.rb'
 
+Layout/EmptyLinesAroundArguments:
+  Enabled: false
+
 Layout/SpaceInsideStringInterpolation:
   EnforcedStyle: no_space
 

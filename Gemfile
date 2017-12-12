@@ -5,7 +5,7 @@ git_source(:github) {|repo_name| "https://github.com/#{repo_name}" }
 # Specify your gem's dependencies in rubocop-md.gemspec
 gemspec
 
-gem "pry-byebug"
+gem "pry-byebug", platform: :mri
 
 local_gemfile = "Gemfile.local"
 
