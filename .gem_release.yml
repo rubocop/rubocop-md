@@ -1,2 +1,3 @@
 bump:
   file: lib/rubocop/markdown/version.rb
+  skip_ci: true
