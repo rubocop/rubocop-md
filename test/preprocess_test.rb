@@ -3,8 +3,13 @@ require "test_helper"
 using SquigglyHeredoc
 
 class RuboCop::Markdown::PreprocessTest < Minitest::Test
-  def described_module
-    RuboCop::Markdown::Preprocess
+  def subject
+    RuboCop::Markdown::Preprocess.new("test.md").tap do |obj|
+      # Avoid syntax warnings
+      def obj.warn_invalid?
+        false
+      end
+    end
   end
 
   def test_no_code_snippets
@@ -20,7 +25,7 @@ class RuboCop::Markdown::PreprocessTest < Minitest::Test
       #<--rubocop/md-->Boby text
     SOURCE
 
-    assert_equal expected, described_module.call(source)
+    assert_equal expected, subject.call(source)
   end
 
   def test_with_one_snippet
@@ -52,7 +57,7 @@ class RuboCop::Markdown::PreprocessTest < Minitest::Test
       #<--rubocop/md-->```
     SOURCE
 
-    assert_equal expected, described_module.call(source)
+    assert_equal expected, subject.call(source)
   end
 
   def test_only_snippet
@@ -76,7 +81,7 @@ class RuboCop::Markdown::PreprocessTest < Minitest::Test
       #<--rubocop/md-->```
     SOURCE
 
-    assert_equal expected, described_module.call(source)
+    assert_equal expected, subject.call(source)
   end
 
   def test_many_snippets
@@ -128,7 +133,7 @@ class RuboCop::Markdown::PreprocessTest < Minitest::Test
       #<--rubocop/md-->```
     SOURCE
 
-    assert_equal expected, described_module.call(source)
+    assert_equal expected, subject.call(source)
   end
 
   def test_invalid_syntax
@@ -160,7 +165,7 @@ class RuboCop::Markdown::PreprocessTest < Minitest::Test
       #<--rubocop/md-->```
     SOURCE
 
-    assert_equal expected, described_module.call(source)
+    assert_equal expected, subject.call(source)
   end
 
   def test_non_ruby_snippet
@@ -186,7 +191,7 @@ class RuboCop::Markdown::PreprocessTest < Minitest::Test
       #<--rubocop/md-->```
     SOURCE
 
-    assert_equal expected, described_module.call(source)
+    assert_equal expected, subject.call(source)
   end
 
   def test_ambigious_non_ruby_snippet
@@ -238,6 +243,6 @@ class RuboCop::Markdown::PreprocessTest < Minitest::Test
       #<--rubocop/md-->```
     SOURCE
 
-    assert_equal expected, described_module.call(source)
+    assert_equal expected, subject.call(source)
   end
 end

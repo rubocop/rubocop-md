@@ -1,7 +1,10 @@
 $LOAD_PATH.unshift File.expand_path("../../lib", __FILE__)
+require "rubocop"
 require "rubocop-md"
 
 require "pry-byebug" rescue LoadError # rubocop:disable all
+
+RuboCop::Markdown.config_store = RuboCop::ConfigStore.new
 
 module SquigglyHeredoc
   refine String do

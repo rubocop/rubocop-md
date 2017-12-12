@@ -4,7 +4,7 @@ module RuboCop
   module Markdown
     # Transform source Markdown file into valid Ruby file
     # by commenting out all non-code lines
-    module Preprocess
+    class Preprocess
       # This is a regexp to extract code blocks from .md files.
       #
       # Only recognizes backticks-style code blocks.
@@ -45,31 +45,6 @@ module RuboCop
       end
 
       class << self
-        # rubocop:disable Metrics/MethodLength
-        def call(src)
-          parts = src.split(MD_REGEXP)
-
-          walker = Walker.new
-
-          parts.each do |part|
-            if walker.code_body?
-              next walker.next! if maybe_ruby?(@syntax) && valid_syntax?(part)
-            end
-
-            if walker.code_attr?
-              @syntax = part.gsub(/(^\s+|\s+$)/, "")
-              next walker.next!
-            end
-
-            comment_lines! part
-
-            walker.next!
-          end
-
-          parts.join
-        end
-        # rubocop:enable Metrics/MethodLength
-
         # Revert preprocess changes.
         #
         # When autocorrect is applied, RuboCop re-writes the file
@@ -81,25 +56,62 @@ module RuboCop
           contents.gsub!(/^##{MARKER}/m, "")
           File.write(file, contents)
         end
+      end
 
-        private
+      attr_reader :config
 
-        # Check codeblock attribute to prevent from parsing
-        # non-Ruby snippets and avoid false positives
-        def maybe_ruby?(syntax)
-          syntax.empty? || RUBY_TYPES.include?(syntax)
+      def initialize(file)
+        @config = Markdown.config_store.for(file)
+      end
+
+      # rubocop:disable Metrics/MethodLength
+      def call(src)
+        parts = src.split(MD_REGEXP)
+
+        walker = Walker.new
+
+        parts.each do |part|
+          if walker.code_body?
+            next walker.next! if maybe_ruby?(@syntax) && valid_syntax?(part)
+          end
+
+          if walker.code_attr?
+            @syntax = part.gsub(/(^\s+|\s+$)/, "")
+            next walker.next!
+          end
+
+          comment_lines! part
+
+          walker.next!
         end
 
-        # Try to parse with Ripper.
-        # Invalid Ruby (non-Ruby) code returns `nil`.
-        def valid_syntax?(src)
-          !Ripper.sexp(src).nil?
-        end
+        parts.join
+      end
+      # rubocop:enable Metrics/MethodLength
 
-        def comment_lines!(src)
-          return if src =~ /\A\n\z/
-          src.gsub!(/^(.)/m, "##{MARKER}\\1")
-        end
+      private
+
+      # Check codeblock attribute to prevent from parsing
+      # non-Ruby snippets and avoid false positives
+      def maybe_ruby?(syntax)
+        syntax.empty? || RUBY_TYPES.include?(syntax)
+      end
+
+      # Try to parse with Ripper.
+      # Invalid Ruby (non-Ruby) code returns `nil`.
+      def valid_syntax?(src)
+        return true if warn_invalid?
+        !Ripper.sexp(src).nil?
+      end
+
+      # Where to show warning when snippet is not a valid Ruby
+      def warn_invalid?
+        config["Markdown"] && config["Markdown"].fetch("WarnInvalid", false)
+      end
+
+      def comment_lines!(src)
+        return if src =~ /\A\n\z/
+        src.gsub!(/^(.)/m, "##{MARKER}\\1")
       end
     end
   end
