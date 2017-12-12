@@ -16,6 +16,11 @@ Layout/TrailingBlankLines:
     - '**/*.md'
     - '**/*.markdown'
 
+Naming/FileName:
+  Exclude:
+    - '**/*.md'
+    - '**/*.markdown'
+
 Style/AsciiComments:
   Exclude:
     - '**/*.md'
