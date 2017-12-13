@@ -73,8 +73,10 @@ Markdown:
 ## Limitations
 
 - RuboCop cache is disabled for Markdown files (because cache knows nothing about preprocessing)
-- Uses naive Regexp-based approach to extract code blocks from Markdown, support only backticks-style code blocks
+- Uses naive Regexp-based approach to extract code blocks from Markdown, support only backticks-style code blocks\*
 - No language detection included; if you do not specify language for your code blocks, you'd better turn `WarnInvalid` off (see above)
+
+\* It should be easy to integrate a _real_ parser (e.g. [Kramdown](https://kramdown.gettalong.org)) and handle all possible syntax. Feel free to open an issue or pull request!
 
 ## Development
 
