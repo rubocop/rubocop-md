@@ -26,7 +26,7 @@ RuboCop::Markdown.inject!
 
 RuboCop::Runner.prepend(Module.new do
   # Set config store for Markdown
-  def initialize(*)
+  def initialize(*args)
     super
     RuboCop::Markdown.config_store = @config_store
   end

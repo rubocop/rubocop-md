@@ -9,9 +9,20 @@ matrix:
       gemfile: gemfiles/rubocopmaster.gemfile
     - rvm: jruby-9.1.0.0
       gemfile: Gemfile
+    - rvm: 2.5.0
+      gemfile: gemfiles/rubocopmaster.gemfile
+    - rvm: 2.5.0
+      gemfile: Gemfile
     - rvm: 2.4.2
       gemfile: Gemfile
     - rvm: 2.3.1
       gemfile: Gemfile
     - rvm: 2.2.0
       gemfile: Gemfile
+  allow_failures:
+    - rvm: ruby-head
+      gemfile: gemfiles/rubocopmaster.gemfile
+    - rvm: jruby-9.1.0.0
+      gemfile: Gemfile
+    - rvm: 2.5.0
+      gemfile: gemfiles/rubocopmaster.gemfile
