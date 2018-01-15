@@ -46,22 +46,63 @@ Autocorrect works too:
 rubocop -r "rubocop-md" -a ./lib
 ```
 
-### Configuration file
+### Configuration
 
-First, add `rubocop-md` to your `.rubocop.yml`:
+Code in the documentation does not make sense to be checked for some style guidelines (eg `Style/FrozenStringLiteralComment`).
+
+We described such rules in the [default config](config/default.yml), but if you use the same settings in your project’s `.rubocop.yml` file, `RoboCop` will override them.
+
+Fortunately, `RuboCop` supports directory-level configuration and we can do the next trick.
+
+At first, add `rubocop-md` to your main `.rubocop.yml`:
 
 ```yml
+# .rubocop.yml
+
 require:
  - "rubocop-md"
 ```
 
-Additional options:
+*Notice: additional options*
 
 ```yml
 # .rubocop.yml
+
 Markdown:
   # Whether to run RuboCop against non-valid snippets
   WarnInvalid: true
+```
+
+Secondly, create empty `.rubocop.yml` in your docs directory.
+
+```bash
+├── docs
+│   ├── .rubocop.yml
+│   ├── doc1.md
+│   ├── doc2.md
+│   └── doc3.md
+├── lib
+├── .rubocop.yml # main
+└── ...
+```
+
+Third, just run
+
+```bash
+$ rubocop
+```
+
+Also you can add special rules in the second `.rubocop.yml`
+
+```ruby
+# rubocop.yml in docs folder
+
+Metrics/LineLength:
+  Max: 100
+
+Lint/Void:
+  Exclude:
+    - '*.md'
 ```
 
 ## How it works?
