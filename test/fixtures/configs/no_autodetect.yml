@@ -1,0 +1,4 @@
+inherit_from: "../../../.rubocop.yml"
+
+Markdown:
+  Autodetect: false

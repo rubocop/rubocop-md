@@ -10,7 +10,7 @@ module RuboCop
       # Only recognizes backticks-style code blocks.
       #
       # Try it: http://rubular.com/r/iJaKBkSrrT
-      MD_REGEXP = /^([ \t]*`{3,4})([\w[[:blank:]]]*\n)([\s\S]+?)(^[ \t]*\1[[:blank:]]*\n)/m
+      MD_REGEXP = /^([ \t]*`{3,4})([\w[[:blank:]]]*\n)([\s\S]+?)(^[ \t]*\1[[:blank:]]*\n?)/m
 
       MARKER = "<--rubocop/md-->".freeze
 
@@ -72,7 +72,7 @@ module RuboCop
 
         parts.each do |part|
           if walker.code_body?
-            next walker.next! if maybe_ruby?(@syntax) && valid_syntax?(part)
+            next walker.next! if maybe_ruby?(@syntax) && valid_syntax?(@syntax, part)
           end
 
           if walker.code_attr?
@@ -94,19 +94,31 @@ module RuboCop
       # Check codeblock attribute to prevent from parsing
       # non-Ruby snippets and avoid false positives
       def maybe_ruby?(syntax)
-        syntax.empty? || RUBY_TYPES.include?(syntax)
+        (autodetect? && syntax.empty?) || ruby?(syntax)
       end
 
-      # Try to parse with Ripper.
-      # Invalid Ruby (non-Ruby) code returns `nil`.
-      def valid_syntax?(src)
-        return true if warn_invalid?
+      # Check codeblack attribute if it's defined and of Ruby type
+      def ruby?(syntax)
+        RUBY_TYPES.include?(syntax)
+      end
+
+      # Try to parse with Ripper
+      # Invalid Ruby code (or non-Ruby) returns `nil`.
+      # Return true if it's explicit Ruby and warn_invalid?
+      def valid_syntax?(syntax, src)
+        return true if ruby?(syntax) && warn_invalid?
         !Ripper.sexp(src).nil?
       end
 
-      # Where to show warning when snippet is not a valid Ruby
+      # Whether to show warning when snippet is not a valid Ruby
       def warn_invalid?
-        config["Markdown"] && config["Markdown"].fetch("WarnInvalid", false)
+        config["Markdown"] && config["Markdown"].fetch("WarnInvalid", true)
+      end
+
+      # Whether to try to detect Ruby by parsing codeblock.
+      # If it's set to false we lint only implicitly specified Ruby blocks.
+      def autodetect?
+        config["Markdown"] && config["Markdown"].fetch("Autodetect", true)
       end
 
       def comment_lines!(src)

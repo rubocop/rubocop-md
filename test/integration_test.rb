@@ -37,7 +37,6 @@ class RuboCop::Markdown::AnalyzeTest < Minitest::Test
     res = run_rubocop("multiple_invalid_snippets.md")
 
     assert_match %r{Inspecting 1 file}, res
-    assert_match %r{1 offense detected}, res
     assert_match %r{Lint/Syntax: unexpected token}, res
   end
 
@@ -45,6 +44,16 @@ class RuboCop::Markdown::AnalyzeTest < Minitest::Test
     res = run_rubocop(
       "multiple_invalid_snippets.md",
       options: "-c configs/no_warn_invalid.yml"
+    )
+
+    assert_match %r{Inspecting 1 file}, res
+    assert_match %r{no offenses detected}, res
+  end
+
+  def test_multiple_invalid_snippets_file_no_autodetect
+    res = run_rubocop(
+      "multiple_invalid_snippets_unknown.md",
+      options: "-c configs/no_autodetect.yml"
     )
 
     assert_match %r{Inspecting 1 file}, res

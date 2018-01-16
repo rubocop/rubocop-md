@@ -71,6 +71,8 @@ require:
 Markdown:
   # Whether to run RuboCop against non-valid snippets
   WarnInvalid: true
+  # Whether to lint codeblocks without code attributes
+  Autodetect: true
 ```
 
 Secondly, create empty `.rubocop.yml` in your docs directory.

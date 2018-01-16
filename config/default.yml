@@ -1,5 +1,6 @@
 Markdown:
   WarnInvalid: true
+  Autodetect: true
 
 Layout/CommentIndentation:
   Exclude:
