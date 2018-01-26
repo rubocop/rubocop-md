@@ -17,6 +17,11 @@ Layout/TrailingBlankLines:
     - '**/*.md'
     - '**/*.markdown'
 
+Lint/UselessAssignment:
+  Exclude:
+    - '**/*.md'
+    - '**/*.markdown'
+
 Naming/FileName:
   Exclude:
     - '**/*.md'
