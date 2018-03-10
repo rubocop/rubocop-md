@@ -4,7 +4,7 @@ require "fileutils"
 
 module RuboCopRunner
   def run_rubocop(path, options: "")
-    md_path = File.expand_path("../../lib/rubocop-md.rb", __FILE__)
+    md_path = File.expand_path("../lib/rubocop-md.rb", __dir__)
     output, _status = Open3.capture2(
       "bundle exec rubocop -r #{md_path} #{options} #{path}",
       chdir: File.join(__dir__, "fixtures")
