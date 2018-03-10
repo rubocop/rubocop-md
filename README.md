@@ -60,7 +60,7 @@ At first, add `rubocop-md` to your main `.rubocop.yml`:
 # .rubocop.yml
 
 require:
- - "rubocop-md"
+  - "rubocop-md"
 ```
 
 *Notice: additional options*
@@ -105,6 +105,28 @@ Metrics/LineLength:
 Lint/Void:
   Exclude:
     - '*.md'
+```
+
+### But if I want to use inline disabling some directive like in classic RuboCop?
+
+You can use this tricks
+
+```
+# my_post.md
+
+... some markdown ...
+
+<span style="display:none;"># rubocop:disable all</span>
+
+```ruby
+def my_poor_method(foo)
+  [:a, :b, :c] + ["#{foo}".to_sym]
+end
+``` end of snippet
+
+<span style="display:none;"># rubocop:enable all</span>
+
+... continuation of article ... 
 ```
 
 ## How it works?
