@@ -1,5 +1,5 @@
 [![Gem Version](https://badge.fury.io/rb/rubocop-md.svg)](http://badge.fury.io/rb/rubocop-md)
-[![Travis Status](https://travis-ci.org/palkan/rubocop-md.svg?branch=master)](https://travis-ci.org/palkan/rubocop-md)
+[![Travis Status](https://travis-ci.org/rubocop-hq/rubocop-md.svg?branch=master)](https://travis-ci.org/rubocop-hq/rubocop-md)
 
 # Rubocop Markdown
 
