@@ -35,6 +35,7 @@ RuboCop::Runner.prepend(Module.new do
   # NOTE: we should involve preprocessing in RuboCop::CachedData#deserialize_offenses
   def file_offense_cache(file)
     return yield if RuboCop::Markdown.markdown_file?(file)
+
     super
   end
 

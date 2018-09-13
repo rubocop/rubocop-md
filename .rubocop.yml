@@ -37,6 +37,10 @@ Layout/EmptyLinesAroundArguments:
 Layout/SpaceInsideStringInterpolation:
   EnforcedStyle: no_space
 
+Naming/FileName:
+  Exclude:
+    - 'lib/rubocop-md.rb'
+
 Metrics/LineLength:
   Max: 100
   Exclude:
