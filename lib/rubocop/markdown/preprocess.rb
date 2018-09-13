@@ -107,6 +107,7 @@ module RuboCop
       # Return true if it's explicit Ruby and warn_invalid?
       def valid_syntax?(syntax, src)
         return true if ruby?(syntax) && warn_invalid?
+
         !Ripper.sexp(src).nil?
       end
 
@@ -123,6 +124,7 @@ module RuboCop
 
       def comment_lines!(src)
         return if src =~ /\A\n\z/
+
         src.gsub!(/^(.)/m, "##{MARKER}\\1")
       end
     end
