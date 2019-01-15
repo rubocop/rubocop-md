@@ -21,6 +21,10 @@ Style/Documentation:
   Exclude:
     - 'test/**/*.rb'
 
+# TEMP: wait for the release of https://github.com/rubocop-hq/rubocop/pull/6623
+Style/TrailingCommaInArguments:
+  Enabled: false
+
 Style/StringLiterals:
   EnforcedStyle: double_quotes
 
