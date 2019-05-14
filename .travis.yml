@@ -19,8 +19,6 @@ matrix:
       gemfile: Gemfile
     - rvm: 2.3.1
       gemfile: Gemfile
-    - rvm: 2.2.0
-      gemfile: Gemfile
   allow_failures:
     - rvm: ruby-head
       gemfile: gemfiles/rubocopmaster.gemfile
