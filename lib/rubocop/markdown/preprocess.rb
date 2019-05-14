@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "ripper"
 
 module RuboCop
@@ -12,7 +14,7 @@ module RuboCop
       # Try it: http://rubular.com/r/iJaKBkSrrT
       MD_REGEXP = /^([ \t]*`{3,4})([\w[[:blank:]]]*\n)([\s\S]+?)(^[ \t]*\1[[:blank:]]*\n?)/m.freeze
 
-      MARKER = "<--rubocop/md-->".freeze
+      MARKER = "<--rubocop/md-->"
 
       # See https://github.com/github/linguist/blob/v5.3.3/lib/linguist/languages.yml#L3925
       RUBY_TYPES = %w[
@@ -113,13 +115,13 @@ module RuboCop
 
       # Whether to show warning when snippet is not a valid Ruby
       def warn_invalid?
-        config["Markdown"] && config["Markdown"].fetch("WarnInvalid", true)
+        config["Markdown"]&.fetch("WarnInvalid", true)
       end
 
       # Whether to try to detect Ruby by parsing codeblock.
       # If it's set to false we lint only implicitly specified Ruby blocks.
       def autodetect?
-        config["Markdown"] && config["Markdown"].fetch("Autodetect", true)
+        config["Markdown"]&.fetch("Autodetect", true)
       end
 
       def comment_lines!(src)

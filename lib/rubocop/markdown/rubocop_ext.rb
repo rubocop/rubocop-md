@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module RuboCop
   module Markdown # :nodoc:
     MARKDOWN_EXTENSIONS = %w[.md .markdown].freeze
