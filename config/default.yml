@@ -17,6 +17,11 @@ Layout/TrailingBlankLines:
     - '**/*.md'
     - '**/*.markdown'
 
+Layout/TrailingEmptyLines:
+  Exclude:
+    - '**/*.md'
+    - '**/*.markdown'
+
 Lint/UselessAssignment:
   Exclude:
     - '**/*.md'
@@ -47,6 +52,6 @@ Style/FrozenStringLiteralComment:
     - '**/*.md'
     - '**/*.markdown'
 
-Metrics/LineLength:
+Layout/LineLength:
   IgnoredPatterns:
     - !ruby/regexp /^\#/

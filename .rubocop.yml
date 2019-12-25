@@ -14,9 +14,6 @@ AllCops:
   StyleGuideCopsOnly: false
   TargetRubyVersion: 2.3
 
-Rails:
-  Enabled: false
-
 Style/Documentation:
   Exclude:
     - 'test/**/*.rb'
@@ -41,7 +38,7 @@ Naming/FileName:
   Exclude:
     - 'lib/rubocop-md.rb'
 
-Metrics/LineLength:
+Layout/LineLength:
   Max: 100
   Exclude:
     - 'test/**/*.rb'

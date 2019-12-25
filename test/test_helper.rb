@@ -6,7 +6,7 @@ require "rubocop-md"
 
 begin
   require "pry-byebug"
-rescue LoadError # rubocop:disable Lint/HandleExceptions
+rescue LoadError # rubocop:disable Lint/SuppressedException
 end
 
 RuboCop::Markdown.config_store = RuboCop::ConfigStore.new
