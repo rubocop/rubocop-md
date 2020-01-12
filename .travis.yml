@@ -11,8 +11,10 @@ matrix:
       gemfile: gemfiles/rubocopmaster.gemfile
     - rvm: jruby-9.2.8.0
       gemfile: Gemfile
-    - rvm: 2.6
+    - rvm: 2.7
       gemfile: gemfiles/rubocopmaster.gemfile
+    - rvm: 2.7
+      gemfile: Gemfile
     - rvm: 2.6
       gemfile: Gemfile
     - rvm: 2.5
