@@ -2,6 +2,8 @@
 
 ## master (unreleased)
 
+## 0.3.2 (2020-03-18)
+
 - [#9](https://github.com/rubocop-hq/rubocop-md/pull/9): Add file extensions for Markdown ([@ybiquitous][])
 
 ## 0.3.1 (2019-12-25)
