@@ -2,7 +2,7 @@
 
 ## master (unreleased)
 
-- Add file extensions for Markdown ([@ybiquitous][])
+- [#9](https://github.com/rubocop-hq/rubocop-md/pull/9): Add file extensions for Markdown ([@ybiquitous][])
 
 ## 0.3.1 (2019-12-25)
 
