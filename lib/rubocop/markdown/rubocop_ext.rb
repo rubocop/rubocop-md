@@ -2,7 +2,20 @@
 
 module RuboCop
   module Markdown # :nodoc:
-    MARKDOWN_EXTENSIONS = %w[.md .markdown].freeze
+    # According to Linguist.
+    # See https://github.com/github/linguist/blob/96ca71ab99c2f9928d5d69f4c08fd2a51440d045/lib/linguist/languages.yml#L3065-L3083
+    MARKDOWN_EXTENSIONS = %w[
+      .md
+      .markdown
+      .mdown
+      .mdwn
+      .mdx
+      .mkd
+      .mkdn
+      .mkdown
+      .ronn
+      .workbook
+    ].freeze
 
     class << self
       attr_accessor :config_store
