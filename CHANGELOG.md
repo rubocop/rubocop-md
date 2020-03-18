@@ -2,6 +2,8 @@
 
 ## master (unreleased)
 
+- [#9](https://github.com/rubocop-hq/rubocop-md/pull/9): Add file extensions for Markdown ([@ybiquitous][])
+
 ## 0.3.1 (2019-12-25)
 
 - Upgrade to RuboCop 0.78 ([@palkan][])
@@ -13,3 +15,4 @@ Change the default config to use the new cop names for (e.g., `Layout/LineLength
 - **Drop Ruby 2.2 support** ([@palkan][])
 
 [@palkan]: https://github.com/palkan
+[@ybiquitous]: https://github.com/ybiquitous

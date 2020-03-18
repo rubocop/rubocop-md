@@ -1,0 +1,3 @@
+```ruby
+puts 'John'
+```
