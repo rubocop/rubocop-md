@@ -2,6 +2,8 @@
 
 ## master (unreleased)
 
+## 0.4.0 (2020-07-03)
+
 - [#10](https://github.com/rubocop-hq/rubocop-md/pull/10): **Drop Ruby 2.3 support** ([@dominicsayers][])
 
 ## 0.3.2 (2020-03-18)
