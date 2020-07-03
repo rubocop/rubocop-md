@@ -19,6 +19,7 @@ module RuboCop
 
     class << self
       attr_accessor :config_store
+
       # Merge markdown config into default configuration
       # See https://github.com/backus/rubocop-rspec/blob/master/lib/rubocop/rspec/inject.rb
       def inject!
