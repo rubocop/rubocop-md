@@ -2,6 +2,8 @@
 
 ## master (unreleased)
 
+- [#10](https://github.com/rubocop-hq/rubocop-md/pull/10): **Drop Ruby 2.3 support** ([@dominicsayers][])
+
 ## 0.3.2 (2020-03-18)
 
 - [#9](https://github.com/rubocop-hq/rubocop-md/pull/9): Add file extensions for Markdown ([@ybiquitous][])
@@ -18,3 +20,4 @@ Change the default config to use the new cop names for (e.g., `Layout/LineLength
 
 [@palkan]: https://github.com/palkan
 [@ybiquitous]: https://github.com/ybiquitous
+[@dominicsayers]: https://github.com/dominicsayers

@@ -85,6 +85,13 @@ class RuboCop::Markdown::AnalyzeTest < Minitest::Test
     assert_includes res, "file_extensions/09.ronn:"
     assert_includes res, "file_extensions/10.workbook:"
   end
+
+  def test_in_flight_parsing
+    res = run_rubocop("in_flight_parse.rb")
+
+    assert_match %r{Inspecting 1 file}, res
+    assert_match %r{no offenses detected}, res
+  end
 end
 
 class RuboCop::Markdown::AutocorrectTest < Minitest::Test
