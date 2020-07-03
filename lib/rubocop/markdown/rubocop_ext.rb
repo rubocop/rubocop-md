@@ -78,7 +78,7 @@ RuboCop::ProcessedSource.prepend(Module.new do
   def parse(src, *args)
     # only process Markdown files
     src = RuboCop::Markdown::Preprocess.new(path).call(src) if
-      path.nil? || RuboCop::Markdown.markdown_file?(path)
+      path && RuboCop::Markdown.markdown_file?(path)
     super(src, *args)
   end
 end)
