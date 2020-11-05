@@ -2,6 +2,10 @@
 
 ## master (unreleased)
 
+## 0.4.1 (2020-11-05)
+
+- Relax required RuboCop version.
+
 ## 0.4.0 (2020-07-03)
 
 - [#10](https://github.com/rubocop-hq/rubocop-md/pull/10): **Drop Ruby 2.3 support** ([@dominicsayers][])
