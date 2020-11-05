@@ -12,7 +12,7 @@ Run Rubocop against your Markdown files to make sure that code examples follow s
 - Preserves specified language (i.e., do not try to analyze "\`\`\`sh")
 - **Supports autocorrect 📝**
 
-This project was developed to keep [test-prof](https://github.com/palkan/test-prof) guides consistent with Ruby style guide.
+This project was developed to keep [test-prof](https://github.com/test-prof/test-prof) guides consistent with Ruby style guide.
 
 ## Installation
 
@@ -126,7 +126,7 @@ end
 
 <span style="display:none;"># rubocop:enable all</span>
 
-... continuation of article ... 
+... continuation of article ...
 ```
 
 ## How it works?
