@@ -73,8 +73,8 @@ module RuboCop
         walker = Walker.new
 
         parts.each do |part|
-          if walker.code_body?
-            next walker.next! if maybe_ruby?(@syntax) && valid_syntax?(@syntax, part)
+          if walker.code_body? && maybe_ruby?(@syntax) && valid_syntax?(@syntax, part)
+            next walker.next!
           end
 
           if walker.code_attr?
