@@ -22,11 +22,6 @@ Layout/TrailingEmptyLines:
     - '**/*.md'
     - '**/*.markdown'
 
-Lint/UselessAssignment:
-  Exclude:
-    - '**/*.md'
-    - '**/*.markdown'
-
 Lint/DuplicateRequire:
   Exclude:
     - '**/*.md'
