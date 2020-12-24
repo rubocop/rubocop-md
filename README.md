@@ -1,5 +1,5 @@
 [![Gem Version](https://badge.fury.io/rb/rubocop-md.svg)](http://badge.fury.io/rb/rubocop-md)
-[![Travis Status](https://travis-ci.org/rubocop-hq/rubocop-md.svg?branch=master)](https://travis-ci.org/rubocop-hq/rubocop-md)
+![Test](https://github.com/rubocop-hq/rubocop-md/workflows/Test/badge.svg)
 
 # Rubocop Markdown
 
@@ -145,7 +145,7 @@ end
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests.
+After checking out the repo, run `bundle install` to install dependencies. Then, run `rake test` to run the tests.
 
 To install this gem onto your local machine, run `bundle exec rake install`.
 
