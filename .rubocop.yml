@@ -13,7 +13,8 @@ AllCops:
     - '*.gemspec'
   DisplayCopNames: true
   StyleGuideCopsOnly: false
-  TargetRubyVersion: 2.4
+  TargetRubyVersion: 2.5
+  SuggestExtensions: false
 
 Style/Documentation:
   Exclude:
