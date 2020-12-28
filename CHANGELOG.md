@@ -2,6 +2,10 @@
 
 ## master (unreleased)
 
+## 1.0.1 (2020-12-28)
+
+- Exclude `EmptyLineBetweenDefs` for MD files.
+
 ## 1.0.0 (2020-12-24)
 
 - Drop Ruby 2.4 support and require RuboCop 1.0.
