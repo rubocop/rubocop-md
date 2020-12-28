@@ -22,6 +22,11 @@ Layout/TrailingEmptyLines:
     - '**/*.md'
     - '**/*.markdown'
 
+Layout/EmptyLineBetweenDefs:
+  Exclude:
+    - '**/*.md'
+    - '**/*.markdown'
+
 Lint/DuplicateRequire:
   Exclude:
     - '**/*.md'
