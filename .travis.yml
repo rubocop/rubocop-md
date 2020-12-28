@@ -1,0 +1,33 @@
+sudo: false
+language: ruby
+before_install:
+  - gem uninstall -v '>= 2' -i $(rvm gemdir)@global -ax bundler || true
+  - gem install bundler -v '< 2'
+
+notifications:
+  email: false
+
+matrix:
+  fast_finish: true
+  include:
+    - rvm: ruby-head
+      gemfile: gemfiles/rubocopmaster.gemfile
+    - rvm: jruby-9.2.8.0
+      gemfile: Gemfile
+    - rvm: 2.7
+      gemfile: gemfiles/rubocopmaster.gemfile
+    - rvm: 2.7
+      gemfile: Gemfile
+    - rvm: 2.6
+      gemfile: Gemfile
+    - rvm: 2.5
+      gemfile: Gemfile
+    - rvm: 2.4.2
+      gemfile: Gemfile
+  allow_failures:
+    - rvm: ruby-head
+      gemfile: gemfiles/rubocopmaster.gemfile
+    - rvm: jruby-9.2.8.0
+      gemfile: Gemfile
+    - rvm: 2.5.0
+      gemfile: gemfiles/rubocopmaster.gemfile
