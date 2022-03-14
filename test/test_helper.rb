@@ -4,11 +4,6 @@ $LOAD_PATH.unshift File.expand_path("../lib", __dir__)
 require "rubocop"
 require "rubocop-md"
 
-begin
-  require "pry-byebug"
-rescue LoadError # rubocop:disable Lint/SuppressedException
-end
-
 RuboCop::Markdown.config_store = RuboCop::ConfigStore.new
 
 module SquigglyHeredoc
