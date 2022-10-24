@@ -55,14 +55,18 @@ RuboCop::Runner.prepend(Module.new do
     super
   end
 
+  def inspect_file(*args)
+    super.tap do |(offenses, *)|
+      # Skip offenses reported for ignored MD source (trailing whitespaces, etc.)
+      marker_comment = "##{RuboCop::Markdown::Preprocess::MARKER}"
+      offenses.reject! do |offense|
+        offense.location.source_line.start_with?(marker_comment)
+      end
+    end
+  end
+
   def file_finished(file, offenses)
     return super unless RuboCop::Markdown.markdown_file?(file)
-
-    # Skip offenses reported for ignored MD source (trailing whitespaces, etc.)
-    marker_comment = "##{RuboCop::Markdown::Preprocess::MARKER}"
-    offenses = offenses.reject do |offense|
-      offense.location.source_line.start_with?(marker_comment)
-    end
 
     # Run Preprocess.restore if file has been autocorrected
     if @options[:auto_correct] || @options[:autocorrect]
