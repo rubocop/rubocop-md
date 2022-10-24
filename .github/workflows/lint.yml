@@ -37,4 +37,5 @@ jobs:
     - name: Run Rubocop
       run: |
         bundle exec rubocop -r./lib/rubocop-md.rb README.md CHANGELOG.md
+        git status
         git diff --exit-code
