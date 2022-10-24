@@ -19,7 +19,7 @@ This project was developed to keep [test-prof](https://github.com/test-prof/test
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'rubocop-md'
+gem "rubocop-md"
 ```
 
 And then execute:
@@ -96,7 +96,7 @@ $ rubocop
 
 Also you can add special rules in the second `.rubocop.yml`
 
-```ruby
+```yml
 # rubocop.yml in docs folder
 
 Metrics/LineLength:
@@ -111,7 +111,7 @@ Lint/Void:
 
 You can use this tricks
 
-```
+```md
 # my_post.md
 
 ... some markdown ...
@@ -122,7 +122,9 @@ You can use this tricks
 def my_poor_method(foo)
   [:a, :b, :c] + ["#{foo}".to_sym]
 end
-``` end of snippet
+```
+
+end of snippet
 
 <span style="display:none;"># rubocop:enable all</span>
 

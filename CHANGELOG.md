@@ -2,6 +2,8 @@
 
 ## master (unreleased)
 
+- Ignore offenses in non-code source.
+
 ## 1.0.1 (2020-12-28)
 
 - Exclude `EmptyLineBetweenDefs` for MD files.
