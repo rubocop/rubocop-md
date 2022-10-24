@@ -15,19 +15,26 @@ jobs:
       CI: true
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/cache@v1
-      with:
-        path: /home/runner/bundle
-        key: bundle-lint-${{ hashFiles('Gemfile') }}-${{ hashFiles('**/*.gemspec') }}
-        restore-keys: |
-          bundle-lint-
     - uses: ruby/setup-ruby@v1
       with:
         ruby-version: 2.7
-    - name: Bundle install
-      run: |
-        bundle config path /home/runner/bundle
-        bundle install
+        bundler-cache: true
     - name: Run Rubocop
       run: |
         bundle exec rubocop
+  rubocop-md:
+    runs-on: ubuntu-latest
+    env:
+      BUNDLE_JOBS: 4
+      BUNDLE_RETRY: 3
+      CI: true
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 3.1
+        bundler-cache: true
+    - name: Run Rubocop
+      run: |
+        bundle exec rubocop -r./lib/rubocop-md.rb README.md CHANGELOG.md
+        git diff --exit-code
