@@ -92,6 +92,13 @@ class RuboCop::Markdown::AnalyzeTest < Minitest::Test
     assert_match %r{Inspecting 1 file}, res
     assert_match %r{no offenses detected}, res
   end
+
+  def test_non_code_offenses
+    res = run_rubocop("NON_CODE_OFFENSES.md")
+
+    assert_match %r{Inspecting 1 file}, res
+    assert_match %r{no offenses detected}, res
+  end
 end
 
 class RuboCop::Markdown::AutocorrectTest < Minitest::Test
