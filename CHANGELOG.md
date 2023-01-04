@@ -2,6 +2,8 @@
 
 ## master (unreleased)
 
+- Drop Ruby 2.5 support.
+
 ## 1.1.0 (2022-10-24)
 
 - Ignore offenses in non-code source.

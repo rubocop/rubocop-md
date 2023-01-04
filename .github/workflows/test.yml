@@ -23,8 +23,6 @@ jobs:
           "Gemfile"
         ]
         include:
-        - ruby: "2.5"
-          gemfile: "Gemfile"
         - ruby: "2.6"
           gemfile: "Gemfile"
         - ruby: "3.1"
