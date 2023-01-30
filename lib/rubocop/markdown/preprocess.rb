@@ -14,7 +14,7 @@ module RuboCop
       # Try it: http://rubular.com/r/iJaKBkSrrT
       MD_REGEXP = /^([ \t]*`{3,4})([\w[[:blank:]]]*\n)([\s\S]+?)(^[ \t]*\1[[:blank:]]*\n?)/m.freeze
 
-      MARKER = "<--rubocop/md-->"
+      MARKER = "<--rubocop\/md-->"
 
       # See https://github.com/github/linguist/blob/v5.3.3/lib/linguist/languages.yml#L3925
       RUBY_TYPES = %w[
@@ -55,14 +55,15 @@ module RuboCop
         # We have to restore it.
         def restore!(file)
           contents = File.read(file)
-          contents.gsub!(/^##{MARKER}/m, "")
+          contents.gsub!(/#<--rubocop\/md-->/m, "")
           File.write(file, contents)
         end
       end
 
-      attr_reader :config
+      attr_reader :config, :_file
 
       def initialize(file)
+        @_file = file
         @config = Markdown.config_store.for(file)
       end
 
@@ -86,6 +87,8 @@ module RuboCop
 
           walker.next!
         end
+
+        Preprocess::restore! @_file
 
         parts.join
       end
@@ -127,7 +130,7 @@ module RuboCop
       def comment_lines!(src)
         return if src =~ /\A\n\z/
 
-        src.gsub!(/^(.)/m, "##{MARKER}\\1")
+        src.gsub!(/^(.)/m, "#<--rubocop\/md-->\\1")
       end
     end
   end
