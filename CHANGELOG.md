@@ -2,6 +2,8 @@
 
 ## master (unreleased)
 
+## 1.2.0 (2023-01-31)
+
 - Fix parsing compound syntax hints in code snippets.
 
 - Drop Ruby 2.5 support.
