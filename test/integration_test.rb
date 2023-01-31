@@ -238,4 +238,98 @@ class RuboCop::Markdown::AutocorrectTest < Minitest::Test
 
     assert_equal expected, File.read(fixture_file)
   end
+
+  def test_autocorrect_with_compound_snippets
+    prepare_test(
+      <<-CODE.squiggly
+        Passing an array of symbols is also acceptable.
+
+        ```ruby
+        class Book
+          include ActiveModel::Validations
+
+          validates :title, presence:true, on:[:update, :ensure_title]
+        end
+        ```
+
+        Assuming we have a model that's been saved in an instance variable named
+        `@article`, it looks like this:
+
+        ```html+erb
+        <% if @article.errors.any? %>
+          <div id="error_explanation">
+            <h2><%= pluralize(@article.errors.count, "error") %> prohibited this article from being saved:</h2>
+
+            <ul>
+              <% @article.errors.each do |error| %>
+                <li><%= error.full_message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+        ```
+
+        When triggered by an explicit context, validations are run for that context,
+        as well as any validations _without_ a context.
+
+        ```ruby
+        class Person < ApplicationRecord
+          validates :email, uniqueness: true, on: :account_setup
+              validates :age, numericality: true, on: :account_setup
+            validates :name, presence: true
+        end
+        ```
+
+        That's it.
+      CODE
+    )
+
+    expected = <<-CODE.squiggly
+      Passing an array of symbols is also acceptable.
+
+      ```ruby
+      class Book
+        include ActiveModel::Validations
+
+        validates :title, presence: true, on: %i[update ensure_title]
+      end
+      ```
+
+      Assuming we have a model that's been saved in an instance variable named
+      `@article`, it looks like this:
+
+      ```html+erb
+      <% if @article.errors.any? %>
+        <div id="error_explanation">
+          <h2><%= pluralize(@article.errors.count, "error") %> prohibited this article from being saved:</h2>
+
+          <ul>
+            <% @article.errors.each do |error| %>
+              <li><%= error.full_message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+      ```
+
+      When triggered by an explicit context, validations are run for that context,
+      as well as any validations _without_ a context.
+
+      ```ruby
+      class Person < ApplicationRecord
+        validates :email, uniqueness: true, on: :account_setup
+        validates :age, numericality: true, on: :account_setup
+        validates :name, presence: true
+      end
+      ```
+
+      That's it.
+    CODE
+
+    res = run_rubocop(fixture_name, options: "--autocorrect-all")
+    assert_match %r{7 offenses detected}, res
+    assert_match %r{7 offenses corrected}, res
+
+    assert_equal expected, File.read(fixture_file)
+  end
 end

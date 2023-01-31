@@ -11,8 +11,8 @@ module RuboCop
       #
       # Only recognizes backticks-style code blocks.
       #
-      # Try it: http://rubular.com/r/iJaKBkSrrT
-      MD_REGEXP = /^([ \t]*`{3,4})([\w[[:blank:]]]*\n)([\s\S]+?)(^[ \t]*\1[[:blank:]]*\n?)/m.freeze
+      # Try it: https://rubular.com/r/YMqSWiBuh2TKIJ
+      MD_REGEXP = /^([ \t]*`{3,4})([\w[[:blank:]]+]*\n)([\s\S]+?)(^[ \t]*\1[[:blank:]]*\n?)/m.freeze
 
       MARKER = "<--rubocop/md-->"
 

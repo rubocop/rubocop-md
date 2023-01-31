@@ -2,6 +2,8 @@
 
 ## master (unreleased)
 
+- Fix parsing compound syntax hints in code snippets.
+
 - Drop Ruby 2.5 support.
 
 ## 1.1.0 (2022-10-24)

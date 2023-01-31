@@ -16,5 +16,4 @@ module SquigglyHeredoc
   end
 end
 
-require "minitest/pride"
 require "minitest/autorun"
