@@ -12,7 +12,12 @@ Run Rubocop against your Markdown files to make sure that code examples follow s
 - Preserves specified language (i.e., do not try to analyze "\`\`\`sh")
 - **Supports autocorrect 📝**
 
-This project was developed to keep [test-prof](https://github.com/test-prof/test-prof) guides consistent with Ruby style guide.
+This project was developed to keep [test-prof](https://github.com/test-prof/test-prof) guides consistent with Ruby style guide back in 2017. Since then, many popular Ruby projects adopted it, including:
+
+- [Ruby on Rails](https://github.com/rails/rails)
+- [AnyCable](https://github.com/anycable/anycable)
+- [ViewComponent](https://github.com/ViewComponent/view_component)
+- [Action Policy](https://github.com/palkan/action_policy)
 
 ## Installation
 
