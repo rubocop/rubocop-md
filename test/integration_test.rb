@@ -6,11 +6,11 @@ require "fileutils"
 
 module RuboCopRunner
   def run_rubocop(path, options: "")
-    md_path = File.expand_path("../lib/rubocop-md.rb", __dir__)
     output, _status = Open3.capture2(
-      "bundle exec rubocop -r #{md_path} #{options} #{path}",
+      "bundle exec rubocop #{options} #{path}",
       chdir: File.join(__dir__, "fixtures")
     )
+
     output
   end
 end
@@ -20,6 +20,14 @@ class RuboCop::Markdown::AnalyzeTest < Minitest::Test
 
   def test_single_snippet_file
     res = run_rubocop("single_snippet.md")
+
+    assert_match %r{Inspecting 1 file}, res
+    assert_match %r{1 offense detected}, res
+    assert_match %r{Style/StringLiterals}, res
+  end
+
+  def test_file_with_format_options
+    res = run_rubocop("single_snippet.md", options: "--format progress")
 
     assert_match %r{Inspecting 1 file}, res
     assert_match %r{1 offense detected}, res
