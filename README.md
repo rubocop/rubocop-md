@@ -116,7 +116,7 @@ Lint/Void:
 
 You can use this tricks
 
-```md
+````md
 # my_post.md
 
 ... some markdown ...
@@ -134,7 +134,7 @@ end of snippet
 <span style="display:none;"># rubocop:enable all</span>
 
 ... continuation of article ...
-```
+````
 
 ## How it works?
 
