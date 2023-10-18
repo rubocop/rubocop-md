@@ -42,9 +42,10 @@ RuboCop::Markdown.inject!
 
 RuboCop::Runner.prepend(Module.new do
   # Set config store for Markdown
-  def initialize(*args)
-    super
+  def get_processed_source(*args)
     RuboCop::Markdown.config_store = @config_store
+
+    super
   end
 
   # Do not cache markdown files, 'cause cache doesn't know about processing.
