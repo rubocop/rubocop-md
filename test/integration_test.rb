@@ -5,13 +5,30 @@ require "open3"
 require "fileutils"
 
 module RuboCopRunner
+  MD_LOAD_INLINE_MODE = "inline"
+
   def run_rubocop(path, options: "")
     output, _status = Open3.capture2(
-      "bundle exec rubocop #{options} #{path}",
+      cmd_command_by_env(path, options),
       chdir: File.join(__dir__, "fixtures")
     )
 
     output
+  end
+
+  private
+
+  def cmd_command_by_env(path, options)
+    cmd_command = "bundle exec rubocop"
+    load_mode = ENV.fetch("MD_LOAD_MODE", MD_LOAD_INLINE_MODE)
+
+    if load_mode == MD_LOAD_INLINE_MODE
+      md_path = File.expand_path("../lib/rubocop-md.rb", __dir__)
+
+      cmd_command = "#{cmd_command} -r #{md_path}"
+    end
+
+    "#{cmd_command} #{options} #{path}"
   end
 end
 
