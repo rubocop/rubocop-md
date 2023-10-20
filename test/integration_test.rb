@@ -5,30 +5,28 @@ require "open3"
 require "fileutils"
 
 module RuboCopRunner
-  MD_LOAD_INLINE_MODE = "inline"
+  def run_rubocop(path, options: "", config: nil)
+    md_path = File.expand_path("../lib/rubocop-md.rb", __dir__)
+    md_config_path = File.expand_path("./fixtures/.rubocop.yml", __dir__)
 
-  def run_rubocop(path, options: "")
-    output, _status = Open3.capture2(
-      cmd_command_by_env(path, options),
-      chdir: File.join(__dir__, "fixtures")
-    )
+    options = "#{options} -r #{md_path}" if ENV["MD_LOAD_MODE"] == "options"
 
-    output
-  end
-
-  private
-
-  def cmd_command_by_env(path, options)
-    cmd_command = "bundle exec rubocop"
-    load_mode = ENV.fetch("MD_LOAD_MODE", MD_LOAD_INLINE_MODE)
-
-    if load_mode == MD_LOAD_INLINE_MODE
-      md_path = File.expand_path("../lib/rubocop-md.rb", __dir__)
-
-      cmd_command = "#{cmd_command} -r #{md_path}"
+    if ENV["MD_LOAD_MODE"] == "config"
+      # Add "_with_require" suffix
+      config = if config
+                 config.sub(/\.yml$/, "_with_require.yml")
+               else
+                 md_config_path
+               end
     end
 
-    "#{cmd_command} #{options} #{path}"
+    options = "#{options} -c #{config}" if config
+
+    output, _status = Open3.capture2(
+      "bundle exec rubocop #{options} #{path}",
+      chdir: File.join(__dir__, "fixtures")
+    )
+    output
   end
 end
 
@@ -70,7 +68,7 @@ class RuboCop::Markdown::AnalyzeTest < Minitest::Test
   def test_multiple_invalid_snippets_file_no_warn
     res = run_rubocop(
       "multiple_invalid_snippets.md",
-      options: "-c configs/no_warn_invalid.yml"
+      config: "configs/no_warn_invalid.yml"
     )
 
     assert_match %r{Inspecting 1 file}, res
@@ -80,7 +78,7 @@ class RuboCop::Markdown::AnalyzeTest < Minitest::Test
   def test_multiple_invalid_snippets_file_no_autodetect
     res = run_rubocop(
       "multiple_invalid_snippets_unknown.md",
-      options: "-c configs/no_autodetect.yml"
+      config: "configs/no_autodetect.yml"
     )
 
     assert_match %r{Inspecting 1 file}, res
