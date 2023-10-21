@@ -2,6 +2,10 @@
 
 ## master (unreleased)
 
+## 1.2.1 (2023-10-20)
+
+- Fix incompatibility when loading the plugin from YAML and using other RuboCop options.
+
 ## 1.2.0 (2023-01-31)
 
 - Fix parsing compound syntax hints in code snippets.
