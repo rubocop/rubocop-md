@@ -3,13 +3,10 @@
 require "test_helper"
 
 class RuboCop::Markdown::PreprocessTest < Minitest::Test
-  def subject
-    RuboCop::Markdown::Preprocess.new("test.md").tap do |obj|
-      # Avoid syntax warnings
-      def obj.warn_invalid?
-        false
-      end
-    end
+  def subject(warn_invalid: false)
+    obj = RuboCop::Markdown::Preprocess.new("test.md")
+    obj.define_singleton_method(:warn_invalid?) { warn_invalid }
+    obj
   end
 
   def test_no_code_snippets
@@ -244,5 +241,37 @@ class RuboCop::Markdown::PreprocessTest < Minitest::Test
     SOURCE
 
     assert_equal expected, subject.call(source)
+  end
+
+  def test_snippet_with_unclosed_backtick
+    source = <<~SOURCE
+      # Code example:
+
+      ```ruby
+      `method_call
+      ```
+
+      # Other code example
+
+      ```ruby
+      method_call
+      ```
+    SOURCE
+
+    expected = <<~SOURCE
+      #<--rubocop/md--># Code example:
+      #<--rubocop/md-->
+      #<--rubocop/md-->```ruby
+      `method_call
+      #<--rubocop/md-->```
+      #<--rubocop/md-->
+      #<--rubocop/md--># Other code example
+      #<--rubocop/md-->
+      #<--rubocop/md-->```ruby
+      method_call
+      #<--rubocop/md-->```
+    SOURCE
+
+    assert_equal expected, subject(warn_invalid: true).call(source)
   end
 end

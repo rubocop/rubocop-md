@@ -7,12 +7,12 @@ module RuboCop
     # Transform source Markdown file into valid Ruby file
     # by commenting out all non-code lines
     class Preprocess
-      # This is a regexp to extract code blocks from .md files.
+      # This is a regexp to parse code blocks from .md files.
       #
       # Only recognizes backticks-style code blocks.
       #
       # Try it: https://rubular.com/r/YMqSWiBuh2TKIJ
-      MD_REGEXP = /^([ \t]*`{3,4})([\w[[:blank:]]+]*\n)([\s\S]+?)(^[ \t]*\1[[:blank:]]*\n?)/m.freeze
+      MD_REGEXP = /^([ \t]*`{3,4})([\w[[:blank:]]+]*)?\n([\s\S]+?)(^[ \t]*\1[[:blank:]]*\n?)|(^.*$)/.freeze
 
       MARKER = "<--rubocop/md-->"
 
@@ -25,26 +25,6 @@ module RuboCop
         rb
         rbx
       ].freeze
-
-      class Walker # :nodoc:
-        STEPS = %i[text code_start code_attr code_body code_end].freeze
-
-        STEPS.each do |step|
-          define_method("#{step}?") do
-            STEPS[current_step] == step
-          end
-        end
-
-        attr_accessor :current_step
-
-        def initialize
-          @current_step = 0
-        end
-
-        def next!
-          self.current_step = current_step == (STEPS.size - 1) ? 0 : current_step + 1
-        end
-      end
 
       class << self
         # Revert preprocess changes.
@@ -68,30 +48,33 @@ module RuboCop
 
       # rubocop:disable Metrics/MethodLength
       def call(src)
-        parts = src.split(MD_REGEXP)
+        src.gsub(MD_REGEXP) do |full_match|
+          m = Regexp.last_match
+          open_backticks = m[1]
+          syntax = m[2]
+          code = m[3]
+          close_backticks = m[4]
+          markdown = m[5]
 
-        walker = Walker.new
-
-        parts.each do |part|
-          if walker.code_body? && maybe_ruby?(@syntax) && valid_syntax?(@syntax, part)
-            next walker.next!
+          if markdown
+            # We got markdown outside of a codeblock
+            comment_lines(markdown)
+          elsif ruby_codeblock?(syntax, code)
+            # The codeblock we parsed is assumed ruby, keep as is and append markers to backticks
+            "#{comment_lines(open_backticks + syntax)}\n#{code}#{comment_lines(close_backticks)}"
+          else
+            # The codeblock is not relevant, comment it out
+            comment_lines(full_match)
           end
-
-          if walker.code_attr?
-            @syntax = part.gsub(/(^\s+|\s+$)/, "")
-            next walker.next!
-          end
-
-          comment_lines! part
-
-          walker.next!
         end
-
-        parts.join
       end
       # rubocop:enable Metrics/MethodLength
 
       private
+
+      def ruby_codeblock?(syntax, src)
+        maybe_ruby?(syntax) && valid_syntax?(syntax, src)
+      end
 
       # Check codeblock attribute to prevent from parsing
       # non-Ruby snippets and avoid false positives
@@ -124,10 +107,8 @@ module RuboCop
         config["Markdown"]&.fetch("Autodetect", true)
       end
 
-      def comment_lines!(src)
-        return if src =~ /\A\n\z/
-
-        src.gsub!(/^(.)/m, "##{MARKER}\\1")
+      def comment_lines(src)
+        src.gsub(/^/, "##{MARKER}")
       end
     end
   end
