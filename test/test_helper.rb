@@ -13,14 +13,4 @@ require "rubocop-md"
 
 RuboCop::Markdown.config_store = RuboCop::ConfigStore.new
 
-module SquigglyHeredoc
-  refine String do
-    def squiggly
-      min = scan(/^[ \t]*(?=\S)/).min
-      indent = min ? min.size : 0
-      gsub(/^[ \t]{#{indent}}/, "")
-    end
-  end
-end
-
 require "minitest/autorun"
