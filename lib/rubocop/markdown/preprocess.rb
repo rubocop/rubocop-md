@@ -12,7 +12,13 @@ module RuboCop
       # Only recognizes backticks-style code blocks.
       #
       # Try it: https://rubular.com/r/YMqSWiBuh2TKIJ
-      MD_REGEXP = /^([ \t]*`{3,4})([\w[[:blank:]]+]*)?\n([\s\S]+?)(^[ \t]*\1[[:blank:]]*\n?)|(^.*$)/.freeze
+      MD_REGEXP = /
+        ^([[:blank:]]*`{3,4}) # Match opening backticks
+        ([\w[[:blank:]]+]*)?\n # Match the code block syntax
+        ([\s\S]+?) # Match everything inside the code block
+        (^[[:blank:]]*\1[[:blank:]]*\n?) # Match closing backticks
+        |(^.*$) # If we are not in a codeblock, match the whole line
+      /x.freeze
 
       MARKER = "<--rubocop/md-->"
 
