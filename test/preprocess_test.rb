@@ -2,8 +2,6 @@
 
 require "test_helper"
 
-using SquigglyHeredoc
-
 class RuboCop::Markdown::PreprocessTest < Minitest::Test
   def subject
     RuboCop::Markdown::Preprocess.new("test.md").tap do |obj|
@@ -15,13 +13,13 @@ class RuboCop::Markdown::PreprocessTest < Minitest::Test
   end
 
   def test_no_code_snippets
-    source = <<-SOURCE.squiggly
+    source = <<~SOURCE
       # Header
 
       Boby text
     SOURCE
 
-    expected = <<-SOURCE.squiggly
+    expected = <<~SOURCE
       #<--rubocop/md--># Header
       #<--rubocop/md-->
       #<--rubocop/md-->Boby text
@@ -31,7 +29,7 @@ class RuboCop::Markdown::PreprocessTest < Minitest::Test
   end
 
   def test_with_one_snippet
-    source = <<-SOURCE.squiggly
+    source = <<~SOURCE
       # Header
 
       Code example:
@@ -45,7 +43,7 @@ class RuboCop::Markdown::PreprocessTest < Minitest::Test
       ```
     SOURCE
 
-    expected = <<-SOURCE.squiggly
+    expected = <<~SOURCE
       #<--rubocop/md--># Header
       #<--rubocop/md-->
       #<--rubocop/md-->Code example:
@@ -63,7 +61,7 @@ class RuboCop::Markdown::PreprocessTest < Minitest::Test
   end
 
   def test_only_snippet
-    source = <<-SOURCE.squiggly
+    source = <<~SOURCE
       ```
       class Test < Minitest::Test
         def test_valid
@@ -73,7 +71,7 @@ class RuboCop::Markdown::PreprocessTest < Minitest::Test
       ```
     SOURCE
 
-    expected = <<-SOURCE.squiggly
+    expected = <<~SOURCE
       #<--rubocop/md-->```
       class Test < Minitest::Test
         def test_valid
@@ -87,7 +85,7 @@ class RuboCop::Markdown::PreprocessTest < Minitest::Test
   end
 
   def test_many_snippets
-    source = <<-SOURCE.squiggly
+    source = <<~SOURCE
       # Header
 
       Code example:
@@ -111,7 +109,7 @@ class RuboCop::Markdown::PreprocessTest < Minitest::Test
       ```
     SOURCE
 
-    expected = <<-SOURCE.squiggly
+    expected = <<~SOURCE
       #<--rubocop/md--># Header
       #<--rubocop/md-->
       #<--rubocop/md-->Code example:
@@ -139,7 +137,7 @@ class RuboCop::Markdown::PreprocessTest < Minitest::Test
   end
 
   def test_invalid_syntax
-    source = <<-SOURCE.squiggly
+    source = <<~SOURCE
       # Header
 
       Code example:
@@ -153,7 +151,7 @@ class RuboCop::Markdown::PreprocessTest < Minitest::Test
       ```
     SOURCE
 
-    expected = <<-SOURCE.squiggly
+    expected = <<~SOURCE
       #<--rubocop/md--># Header
       #<--rubocop/md-->
       #<--rubocop/md-->Code example:
@@ -171,7 +169,7 @@ class RuboCop::Markdown::PreprocessTest < Minitest::Test
   end
 
   def test_non_ruby_snippet
-    source = <<-SOURCE.squiggly
+    source = <<~SOURCE
       # Header
 
       Code example:
@@ -182,7 +180,7 @@ class RuboCop::Markdown::PreprocessTest < Minitest::Test
       ```
     SOURCE
 
-    expected = <<-SOURCE.squiggly
+    expected = <<~SOURCE
       #<--rubocop/md--># Header
       #<--rubocop/md-->
       #<--rubocop/md-->Code example:
@@ -197,7 +195,7 @@ class RuboCop::Markdown::PreprocessTest < Minitest::Test
   end
 
   def test_ambigious_non_ruby_snippet
-    source = <<-SOURCE.squiggly
+    source = <<~SOURCE
       # Header
 
       ```ruby
@@ -221,7 +219,7 @@ class RuboCop::Markdown::PreprocessTest < Minitest::Test
       ```
     SOURCE
 
-    expected = <<-SOURCE.squiggly
+    expected = <<~SOURCE
       #<--rubocop/md--># Header
       #<--rubocop/md-->
       #<--rubocop/md-->```ruby

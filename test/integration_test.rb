@@ -125,7 +125,6 @@ class RuboCop::Markdown::AnalyzeTest < Minitest::Test
 end
 
 class RuboCop::Markdown::AutocorrectTest < Minitest::Test
-  using SquigglyHeredoc
   include RuboCopRunner
 
   def fixture_name
@@ -146,7 +145,7 @@ class RuboCop::Markdown::AutocorrectTest < Minitest::Test
 
   def test_autocorrect_single_snippet
     prepare_test(
-      <<-CODE.squiggly
+      <<~CODE
         # Before All
 
         Rails has a great feature – `transactional_tests`.
@@ -166,7 +165,7 @@ class RuboCop::Markdown::AutocorrectTest < Minitest::Test
       CODE
     )
 
-    expected = <<-CODE.squiggly
+    expected = <<~CODE
       # Before All
 
       Rails has a great feature – `transactional_tests`.
@@ -194,7 +193,7 @@ class RuboCop::Markdown::AutocorrectTest < Minitest::Test
 
   def test_autocorrect_multiple_snippets
     prepare_test(
-      <<-CODE.squiggly
+      <<~CODE
         ```ruby
         # bad
         it { is_expected.to be_success }
@@ -225,7 +224,7 @@ class RuboCop::Markdown::AutocorrectTest < Minitest::Test
       CODE
     )
 
-    expected = <<-CODE.squiggly
+    expected = <<~CODE
       ```ruby
       # bad
       it { is_expected.to be_success }
@@ -264,7 +263,7 @@ class RuboCop::Markdown::AutocorrectTest < Minitest::Test
 
   def test_autocorrect_with_compound_snippets
     prepare_test(
-      <<-CODE.squiggly
+      <<~CODE
         Passing an array of symbols is also acceptable.
 
         ```ruby
@@ -307,7 +306,7 @@ class RuboCop::Markdown::AutocorrectTest < Minitest::Test
       CODE
     )
 
-    expected = <<-CODE.squiggly
+    expected = <<~CODE
       Passing an array of symbols is also acceptable.
 
       ```ruby
