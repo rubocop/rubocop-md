@@ -2,6 +2,8 @@
 
 ## master (unreleased)
 
+## 1.2.2 (2023-12-01) ❄️
+
 - Fix analyzing code blocks with backticks.
 
 ## 1.2.1 (2023-10-20)
