@@ -2,6 +2,8 @@
 
 ## master (unreleased)
 
+- Fix analyzing code blocks with backticks.
+
 ## 1.2.1 (2023-10-20)
 
 - Fix incompatibility when loading the plugin from YAML and using other RuboCop options.

@@ -122,6 +122,13 @@ class RuboCop::Markdown::AnalyzeTest < Minitest::Test
     assert_match %r{Inspecting 1 file}, res
     assert_match %r{no offenses detected}, res
   end
+
+  def test_backticks_in_code
+    res = run_rubocop("backticks.md")
+
+    assert_match %r{Inspecting 1 file}, res
+    assert_match %r{1 offense detected}, res
+  end
 end
 
 class RuboCop::Markdown::AutocorrectTest < Minitest::Test

@@ -17,6 +17,9 @@ module RuboCop
       .workbook
     ].freeze
 
+    # A list of cops that could produce offenses in commented lines
+    MARKDOWN_OFFENSE_COPS = %w[Lint/Syntax].freeze
+
     class << self
       attr_accessor :config_store
 
@@ -61,6 +64,8 @@ RuboCop::Runner.prepend(Module.new do
       # Skip offenses reported for ignored MD source (trailing whitespaces, etc.)
       marker_comment = "##{RuboCop::Markdown::Preprocess::MARKER}"
       offenses.reject! do |offense|
+        next if RuboCop::Markdown::MARKDOWN_OFFENSE_COPS.include?(offense.cop_name)
+
         offense.location.source_line.start_with?(marker_comment)
       end
     end
