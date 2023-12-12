@@ -107,6 +107,8 @@ class RuboCop::Markdown::AnalyzeTest < Minitest::Test
     assert_includes res, "file_extensions/08.mkdown:"
     assert_includes res, "file_extensions/09.ronn:"
     assert_includes res, "file_extensions/10.workbook:"
+    assert_includes res, "file_extensions/11.livemd:"
+    assert_includes res, "file_extensions/12.scd:"
   end
 
   def test_in_flight_parsing
