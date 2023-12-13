@@ -62,18 +62,6 @@ RuboCop::Runner.prepend(Module.new do
     super
   end
 
-  def inspect_file(*args)
-    super.tap do |(offenses, *)|
-      # Skip offenses reported for ignored MD source (trailing whitespaces, etc.)
-      marker_comment = "##{RuboCop::Markdown::Preprocess::MARKER}"
-      offenses.reject! do |offense|
-        next if RuboCop::Markdown::MARKDOWN_OFFENSE_COPS.include?(offense.cop_name)
-
-        offense.location.source_line.start_with?(marker_comment)
-      end
-    end
-  end
-
   def file_finished(file, offenses)
     return super unless RuboCop::Markdown.markdown_file?(file)
 
@@ -83,6 +71,20 @@ RuboCop::Runner.prepend(Module.new do
     end
 
     super(file, offenses)
+  end
+end)
+
+RuboCop::Cop::Commissioner::InvestigationReport.prepend(Module.new do
+  # Skip offenses reported for ignored MD source (trailing whitespaces, etc.)
+  def offenses
+    @offenses ||= begin
+      marker_comment = "##{RuboCop::Markdown::Preprocess::MARKER}"
+      offenses_per_cop.flatten(1).reject do |offense|
+        next if RuboCop::Markdown::MARKDOWN_OFFENSE_COPS.include?(offense.cop_name)
+
+        offense.location.source_line.start_with?(marker_comment)
+      end
+    end
   end
 end)
 
