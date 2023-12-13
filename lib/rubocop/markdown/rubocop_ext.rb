@@ -67,7 +67,7 @@ RuboCop::Runner.prepend(Module.new do
 
     # Run Preprocess.restore if file has been autocorrected
     if @options[:auto_correct] || @options[:autocorrect]
-      RuboCop::Markdown::Preprocess.restore!(file)
+      RuboCop::Markdown::Preprocess.restore_and_save!(file)
     end
 
     super(file, offenses)
