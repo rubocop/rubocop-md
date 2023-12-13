@@ -1,5 +1,5 @@
 [![Gem Version](https://badge.fury.io/rb/rubocop-md.svg)](http://badge.fury.io/rb/rubocop-md)
-![Test](https://github.com/rubocop-hq/rubocop-md/workflows/Test/badge.svg)
+![Test](https://github.com/rubocop/rubocop-md/workflows/Test/badge.svg)
 
 # Rubocop Markdown
 
@@ -158,7 +158,7 @@ To install this gem onto your local machine, run `bundle exec rake install`.
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/rubocop-hq/rubocop-md.
+Bug reports and pull requests are welcome on GitHub at https://github.com/rubocop/rubocop-md.
 
 ## License
 
