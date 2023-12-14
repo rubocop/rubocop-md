@@ -1,5 +1,0 @@
-source "https://rubygems.org"
-
-gem "rubocop", github: "bbatsov/rubocop"
-
-gemspec path: ".."
