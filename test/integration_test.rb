@@ -357,7 +357,7 @@ class RuboCop::Markdown::AutocorrectTest < Minitest::Test
       That's it.
     CODE
 
-    res = run_rubocop(fixture_name, options: "--autocorrect-all")
+    res = run_rubocop(fixture_name, options: "-A")
     assert_match %r{7 offenses detected}, res
     assert_match %r{7 offenses corrected}, res
 
