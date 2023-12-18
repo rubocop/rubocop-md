@@ -8,9 +8,11 @@ elsif ENV["MD_LOAD_MODE"] == "config"
   $stdout.puts "⚙️ Run rubocop with 'require: - rubocop-md' in .rubocop.yml"
 end
 
+require "minitest/autorun"
+
 require "rubocop"
+require "rubocop_assertions"
+require "markdown_assertions"
 require "rubocop-md"
 
 RuboCop::Markdown.config_store = RuboCop::ConfigStore.new
-
-require "minitest/autorun"

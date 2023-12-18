@@ -21,7 +21,7 @@ jobs:
         rubocop_version: [""]
         include:
         - ruby: "2.6"
-          rubocop_version: "'1.0.0'"
+          rubocop_version: "'1.45.0'"
         - ruby: "3.2"
           rubocop_version: "github: 'rubocop/rubocop'"
     steps:

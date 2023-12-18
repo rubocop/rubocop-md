@@ -39,10 +39,14 @@ module RuboCop
         # using preproccessed source buffer.
         #
         # We have to restore it.
-        def restore!(file)
+        def restore_and_save!(file)
           contents = File.read(file)
-          contents.gsub!(/^##{MARKER}/m, "")
+          restore!(contents)
           File.write(file, contents)
+        end
+
+        def restore!(src)
+          src.gsub!(/^##{MARKER}/m, "")
         end
       end
 
