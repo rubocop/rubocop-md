@@ -10,17 +10,17 @@ Gem::Specification.new do |spec|
 
   spec.summary       = %q{Run Rubocop against your Markdown files to make sure that code examples follow style guidelines.}
   spec.description   = %q{Run Rubocop against your Markdown files to make sure that code examples follow style guidelines.}
-  spec.homepage      = "https://github.com/rubocop-hq/rubocop-md"
+  spec.homepage      = "https://github.com/rubocop/rubocop-md"
   spec.license       = "MIT"
 
   spec.files = Dir.glob("lib/**/*") + Dir.glob("config/**/*") + %w[README.md LICENSE.txt CHANGELOG.md]
 
   spec.metadata = {
-    "bug_tracker_uri" => "http://github.com/rubocop-hq/rubocop-md/issues",
-    "changelog_uri" => "https://github.com/rubocop-hq/rubocop-md/blob/master/CHANGELOG.md",
-    "documentation_uri" => "https://github.com/rubocop-hq/rubocop-md/blob/master/README.md",
-    "homepage_uri" => "https://github.com/rubocop-hq/rubocop-md",
-    "source_code_uri" => "http://github.com/rubocop-hq/rubocop-md"
+    "bug_tracker_uri" => "http://github.com/rubocop/rubocop-md/issues",
+    "changelog_uri" => "https://github.com/rubocop/rubocop-md/blob/master/CHANGELOG.md",
+    "documentation_uri" => "https://github.com/rubocop/rubocop-md/blob/master/README.md",
+    "homepage_uri" => "https://github.com/rubocop/rubocop-md",
+    "source_code_uri" => "http://github.com/rubocop/rubocop-md"
   }
 
   spec.required_ruby_version = ">= 2.6.0"
