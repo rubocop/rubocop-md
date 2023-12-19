@@ -11,6 +11,8 @@ module RuboCop
 
     require_relative "markdown/inject"
     require_relative "markdown/preprocess"
-    require_relative "markdown/rubocop_ext" if defined?(::RuboCop::ProcessedSource)
+    require_relative "markdown/ruby_extractor"
+
+    RuboCop::Markdown::Inject.defaults!
   end
 end

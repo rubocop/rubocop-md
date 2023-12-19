@@ -14,5 +14,3 @@ require "rubocop"
 require "rubocop_assertions"
 require "markdown_assertions"
 require "rubocop-md"
-
-RuboCop::Markdown.config_store = RuboCop::ConfigStore.new
