@@ -1,3 +1,8 @@
+inherit_mode:
+  merge:
+    - Include
+    - Exclude
+
 Markdown:
   WarnInvalid: true
   Autodetect: true
