@@ -57,17 +57,30 @@ module RuboCop
 
       private
 
+      # rubocop:disable Metrics/MethodLength
       def new_processed_source(code, code_indent, original_processed_source)
-        processed_source = RuboCop::ProcessedSource.new(
-          strip_indent(code, code_indent),
-          original_processed_source.ruby_version,
-          original_processed_source.path
-        )
+        # Can be dropped if RuboCop >= 1.62 only
+        supports_prism = original_processed_source.respond_to?(:parser_engine)
+        processed_source = if supports_prism
+                             RuboCop::ProcessedSource.new(
+                               strip_indent(code, code_indent),
+                               original_processed_source.ruby_version,
+                               original_processed_source.path,
+                               parser_engine: original_processed_source.parser_engine
+                             )
+                           else
+                             RuboCop::ProcessedSource.new(
+                               strip_indent(code, code_indent),
+                               original_processed_source.ruby_version,
+                               original_processed_source.path
+                             )
+                           end
 
         processed_source.config = original_processed_source.config
         processed_source.registry = original_processed_source.registry
         processed_source
       end
+      # rubocop:enable Metrics/MethodLength
 
       # Strip indentation from code inside codeblocks
       def strip_indent(code, code_indent)
