@@ -11,6 +11,5 @@ end
 require "minitest/autorun"
 
 require "rubocop"
-require "rubocop_assertions"
 require "markdown_assertions"
 require "rubocop-md"
