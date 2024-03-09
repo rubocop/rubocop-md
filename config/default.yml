@@ -2,8 +2,29 @@ Markdown:
   WarnInvalid: true
   Autodetect: true
 
+AllCops:
+  inherit_mode:
+    merge:
+      - Include
+  Include:
+    - '**/*.md'
+    - '**/*.livemd'
+    - '**/*.markdown'
+    - '**/*.mdown'
+    - '**/*.mdwn'
+    - '**/*.mdx'
+    - '**/*.mkd'
+    - '**/*.mkdn'
+    - '**/*.mkdown'
+    - '**/*.ronn'
+    - '**/*.scd'
+    - '**/*.workbook'
+
 # Keep in sync with MARKDOWN_EXTENSIONS
 Layout/CommentIndentation: &markdown_excludes
+  inherit_mode:
+    merge:
+      - Exclude
   Exclude:
     - '**/*.md'
     - '**/*.livemd'

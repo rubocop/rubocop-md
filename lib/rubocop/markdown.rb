@@ -14,5 +14,6 @@ module RuboCop
     require_relative "markdown/ruby_extractor"
 
     RuboCop::Markdown::Inject.defaults!
+    RuboCop::Runner.ruby_extractors.unshift(RuboCop::Markdown::RubyExtractor)
   end
 end
