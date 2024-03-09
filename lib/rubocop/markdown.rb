@@ -9,7 +9,11 @@ module RuboCop
     PROJECT_ROOT   = Pathname.new(__dir__).parent.parent.expand_path.freeze
     CONFIG_DEFAULT = PROJECT_ROOT.join("config", "default.yml").freeze
 
+    require_relative "markdown/inject"
     require_relative "markdown/preprocess"
-    require_relative "markdown/rubocop_ext" if defined?(::RuboCop::ProcessedSource)
+    require_relative "markdown/ruby_extractor"
+
+    RuboCop::Markdown::Inject.defaults!
+    RuboCop::Runner.ruby_extractors.unshift(RuboCop::Markdown::RubyExtractor)
   end
 end

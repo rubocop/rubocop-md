@@ -13,6 +13,12 @@ describe BeatleWeightedSearchQuery do
     @john = create(:beatle, name: 'John')
   end
 
+  # Lint/UnusedMethodArgument. The plugin config excludes this,
+  # verify that user configs with cop excludes inherit that
+  def do_something(foo)
+    puts "FOO"
+  end
+
   # and about 15 examples here
 end
 ```

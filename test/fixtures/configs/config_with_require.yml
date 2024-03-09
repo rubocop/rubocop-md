@@ -2,3 +2,7 @@ inherit_from: "../../../.rubocop.yml"
 
 require:
   - "rubocop-md"
+
+Lint/UnusedMethodArgument:
+  Exclude:
+    - "some_file.rb"

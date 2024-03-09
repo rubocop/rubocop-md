@@ -3,17 +3,6 @@
 require "test_helper"
 
 class RuboCop::Markdown::OffenseTest < RuboCop::Markdown::Test
-  def overwrite_config
-    @old_store = RuboCop::Markdown.config_store
-    store = RuboCop::ConfigStore.new
-    store.instance_variable_set(:@options_config, config)
-    RuboCop::Markdown.config_store = store
-  end
-
-  def teardown
-    RuboCop::Markdown.config_store = @old_store if @old_store
-  end
-
   def test_single_snippet
     assert_offense(<<~MARKDOWN)
       # Before All
@@ -176,7 +165,6 @@ class RuboCop::Markdown::OffenseTest < RuboCop::Markdown::Test
   end
 
   def test_multiple_invalid_snippets
-    skip("JRuby doesn't produce the second Lint/Syntax error") if RUBY_ENGINE == "jruby"
     assert_offense(<<~MARKDOWN)
       TestProf provides a built-in shared context for RSpec to profile examples individually:
 
@@ -204,13 +192,11 @@ class RuboCop::Markdown::OffenseTest < RuboCop::Markdown::Test
         config.printer = :call_stack
       end
       ```
-      ^{} Lint/Syntax: unexpected token $end
     MARKDOWN
   end
 
   def test_multiple_invalid_snippets_file_no_warn
     @config = { "Markdown" => { "WarnInvalid" => false } }
-    overwrite_config
 
     assert_no_offenses(<<~MARKDOWN)
       TestProf provides a built-in shared context for RSpec to profile examples individually:
@@ -261,15 +247,27 @@ class RuboCop::Markdown::OffenseTest < RuboCop::Markdown::Test
   # rubocop:enable Layout/TrailingWhitespace
 
   def test_backticks_in_code
-    assert_offense(<<~MARKDOWN, marker: "##{RuboCop::Markdown::Preprocess::MARKER}")
+    assert_offense(<<~MARKDOWN)
       ```ruby
       `method_call
+      ^ Lint/Syntax: unterminated string meets end of file
       ```
-      _{marker} ^ Lint/Syntax: unexpected token tXSTRING_BEG
 
 
       ```ruby
       further_code("", '')
+                       ^^ Style/StringLiterals: Prefer double-quoted strings unless you need single quotes to avoid extra backslashes for escaping.
+      ```
+    MARKDOWN
+
+    assert_correction(<<~MARKDOWN)
+      ```ruby
+      `method_call
+      ```
+
+
+      ```ruby
+      further_code("", "")
       ```
     MARKDOWN
   end
