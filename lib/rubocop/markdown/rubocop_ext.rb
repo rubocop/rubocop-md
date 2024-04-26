@@ -79,10 +79,11 @@ RuboCop::Cop::Commissioner::InvestigationReport.prepend(Module.new do
   def offenses
     @offenses ||= begin
       marker_comment = "##{RuboCop::Markdown::Preprocess::MARKER}"
+
       offenses_per_cop.flatten(1).reject do |offense|
         next if RuboCop::Markdown::MARKDOWN_OFFENSE_COPS.include?(offense.cop_name)
 
-        offense.location.source_line.start_with?(marker_comment)
+        offense.disabled? || offense.location.source_line.start_with?(marker_comment)
       end
     end
   end
