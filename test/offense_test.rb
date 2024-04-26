@@ -398,6 +398,15 @@ class RuboCop::Markdown::OffenseTest < RuboCop::Markdown::Test
       ```
       <span style="display:none;"># rubocop:enable Style/EmptyMethod, Style/ArrayJoin</span>
 
+      Cops disabled in Ruby block
+
+      ```ruby
+      # rubocop:disable all
+      def blank_method
+      end
+      # rubocop:enable all
+      ```
+
       Actually failing cop (correctable)
 
       ```ruby
@@ -435,6 +444,15 @@ class RuboCop::Markdown::OffenseTest < RuboCop::Markdown::Test
       %w[foo bar baz] * ","
       ```
       <span style="display:none;"># rubocop:enable Style/EmptyMethod, Style/ArrayJoin</span>
+
+      Cops disabled in Ruby block
+
+      ```ruby
+      # rubocop:disable all
+      def blank_method
+      end
+      # rubocop:enable all
+      ```
 
       Actually failing cop (correctable)
 

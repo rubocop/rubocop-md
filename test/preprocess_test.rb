@@ -305,6 +305,15 @@ class RuboCop::Markdown::PreprocessTest < Minitest::Test
       %w[foo bar baz] * ","
       ```
       <span style="display:none;"># rubocop:enable Style/EmptyMethod, Style/ArrayJoin</span>
+
+      Cops disabled in Ruby block
+
+      ```ruby
+      # rubocop:disable all
+      def blank_method
+      end
+      # rubocop:enable all
+      ```
     SOURCE
 
     expected = <<~SOURCE
@@ -336,6 +345,15 @@ class RuboCop::Markdown::PreprocessTest < Minitest::Test
       %w[foo bar baz] * ","
       #<--rubocop/md-->```
       # rubocop:enable Style/EmptyMethod, Style/ArrayJoin <--rubocop/md-->
+      #<--rubocop/md-->
+      #<--rubocop/md-->Cops disabled in Ruby block
+      #<--rubocop/md-->
+      #<--rubocop/md-->```ruby
+      # rubocop:disable all
+      def blank_method
+      end
+      # rubocop:enable all
+      #<--rubocop/md-->```
     SOURCE
 
     assert_equal expected, subject.call(source)
