@@ -306,7 +306,7 @@ class RuboCop::Markdown::PreprocessTest < Minitest::Test
       ```
       <span style="display:none;"># rubocop:enable Style/EmptyMethod, Style/ArrayJoin</span>
 
-      Cops disabled in Ruby block
+      Cops disabled inside Ruby block
 
       ```ruby
       # rubocop:disable all
@@ -346,7 +346,7 @@ class RuboCop::Markdown::PreprocessTest < Minitest::Test
       #<--rubocop/md-->```
       # rubocop:enable Style/EmptyMethod, Style/ArrayJoin <--rubocop/md-->
       #<--rubocop/md-->
-      #<--rubocop/md-->Cops disabled in Ruby block
+      #<--rubocop/md-->Cops disabled inside Ruby block
       #<--rubocop/md-->
       #<--rubocop/md-->```ruby
       # rubocop:disable all
