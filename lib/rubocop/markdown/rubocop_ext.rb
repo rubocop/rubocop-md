@@ -23,6 +23,12 @@ module RuboCop
     # A list of cops that could produce offenses in commented lines
     MARKDOWN_OFFENSE_COPS = %w[Lint/Syntax].freeze
 
+    DIRECTIVE_COMMENT_REGEXP = /
+      (<span\s+style="display:none;">)?
+      #{RuboCop::DirectiveComment::DIRECTIVE_COMMENT_REGEXP}
+      (<\/span>)?
+    /x.freeze
+
     class << self
       attr_accessor :config_store
 
@@ -103,5 +109,12 @@ RuboCop::ProcessedSource.prepend(Module.new do
     src = RuboCop::Markdown::Preprocess.new(path).call(src) if
       path && RuboCop::Markdown.markdown_file?(path)
     super(src, *args)
+  end
+end)
+
+# Treat span'ed comments as the range comments, not single line comments
+RuboCop::DirectiveComment.prepend(Module.new do
+  def single_line?
+    !comment.text.match?(RuboCop::Markdown::DIRECTIVE_COMMENT_REGEXP)
   end
 end)

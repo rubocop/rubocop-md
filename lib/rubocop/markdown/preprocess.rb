@@ -20,11 +20,6 @@ module RuboCop
         |(^.*$) # If we are not in a codeblock, match the whole line
       /x.freeze
 
-      # Based on: https://github.com/rubocop/rubocop/blob/84877a30ef814546b97660c4d8f5d1315e80c326/lib/rubocop/cop/mixin/statement_modifier.rb#L104
-      DECORATOR_REGEXP = /(\#\s*rubocop\s*:\s*(disable|enable|todo)\s+.*)/.freeze
-      DECORATOR_BLOCK_REGEXP = /^<span\s+style="display:none;">#{DECORATOR_REGEXP}<\/span>$/.freeze
-      DECORATOR_BLOCK_PATTERN = "<span style=\"display:none;\">%s</span>"
-
       MARKER = "<--rubocop/md-->"
 
       # See https://github.com/github/linguist/blob/v5.3.3/lib/linguist/languages.yml#L3925
@@ -51,15 +46,7 @@ module RuboCop
         end
 
         def restore!(src)
-          # restore marked lines
           src.gsub!(/^##{MARKER}/m, "")
-
-          # restore marked decorators
-          src.gsub!(/(.*) #{MARKER}$/) do
-            decorator = Regexp.last_match[1]
-
-            DECORATOR_BLOCK_PATTERN % decorator
-          end
         end
       end
 
@@ -69,15 +56,13 @@ module RuboCop
         @config = Markdown.config_store.for(file)
       end
 
-      # rubocop:disable Metrics/MethodLength
       def call(src)
         src.gsub(MD_REGEXP) do |full_match|
           open_backticks, syntax, code, close_backticks, markdown = Regexp.last_match.captures
 
           if markdown
             # We got markdown outside of a codeblock
-            decorator = extract_decorator(markdown)
-            decorator ? mark_decorator(decorator) : mark_lines(markdown)
+            mark_lines(markdown)
           elsif ruby_codeblock?(syntax, code)
             # The codeblock we parsed is assumed ruby, keep as is and append markers to backticks
             "#{mark_lines(open_backticks + syntax)}\n#{code}#{mark_lines(close_backticks)}"
@@ -87,7 +72,6 @@ module RuboCop
           end
         end
       end
-      # rubocop:enable Metrics/MethodLength
 
       private
 
@@ -126,16 +110,8 @@ module RuboCop
         config["Markdown"]&.fetch("Autodetect", true)
       end
 
-      def extract_decorator(markdown)
-        markdown.match(DECORATOR_BLOCK_REGEXP)&.[](1)
-      end
-
       def mark_lines(src)
         src.gsub(/^/, "##{MARKER}")
-      end
-
-      def mark_decorator(decorator)
-        "#{decorator} #{MARKER}"
       end
     end
   end
