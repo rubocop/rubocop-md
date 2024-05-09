@@ -319,32 +319,32 @@ class RuboCop::Markdown::PreprocessTest < Minitest::Test
     expected = <<~SOURCE
       #<--rubocop/md-->All cops disabled
       #<--rubocop/md-->
-      # rubocop:disable all <--rubocop/md-->
+      #<--rubocop/md--><span style="display:none;"># rubocop:disable all</span>
       #<--rubocop/md-->```ruby
       def blank_method
       end
       #<--rubocop/md-->```
-      # rubocop:enable all <--rubocop/md-->
+      #<--rubocop/md--><span style="display:none;"># rubocop:enable all</span>
       #<--rubocop/md-->
       #<--rubocop/md-->All cops disabled as todos
       #<--rubocop/md-->
-      # rubocop:todo all <--rubocop/md-->
+      #<--rubocop/md--><span style="display:none;"># rubocop:todo all</span>
       #<--rubocop/md-->```ruby
       def blank_method
       end
       #<--rubocop/md-->```
-      # rubocop:enable all <--rubocop/md-->
+      #<--rubocop/md--><span style="display:none;"># rubocop:enable all</span>
       #<--rubocop/md-->
       #<--rubocop/md-->Cops disabled explicitly
       #<--rubocop/md-->
-      # rubocop:disable Style/EmptyMethod, Style/ArrayJoin <--rubocop/md-->
+      #<--rubocop/md--><span style="display:none;"># rubocop:disable Style/EmptyMethod, Style/ArrayJoin</span>
       #<--rubocop/md-->```ruby
       def blank_method
       end
 
       %w[foo bar baz] * ","
       #<--rubocop/md-->```
-      # rubocop:enable Style/EmptyMethod, Style/ArrayJoin <--rubocop/md-->
+      #<--rubocop/md--><span style="display:none;"># rubocop:enable Style/EmptyMethod, Style/ArrayJoin</span>
       #<--rubocop/md-->
       #<--rubocop/md-->Cops disabled inside Ruby block
       #<--rubocop/md-->
