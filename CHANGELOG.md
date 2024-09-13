@@ -2,6 +2,10 @@
 
 ## master (unreleased)
 
+## 1.2.3 (2024-09-12)
+
+- Do no try linting `.mdx` files by default.
+
 ## 1.2.2 (2023-12-01) ❄️
 
 - Fix analyzing code blocks with backticks.
