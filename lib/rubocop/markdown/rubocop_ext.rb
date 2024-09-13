@@ -68,7 +68,7 @@ RuboCop::Runner.prepend(Module.new do
       RuboCop::Markdown::Preprocess.restore_and_save!(file)
     end
 
-    super(file, offenses)
+    super
   end
 end)
 
@@ -99,6 +99,6 @@ RuboCop::ProcessedSource.prepend(Module.new do
     # only process Markdown files
     src = RuboCop::Markdown::Preprocess.new(path).call(src) if
       path && RuboCop::Markdown.markdown_file?(path)
-    super(src, *args)
+    super
   end
 end)
