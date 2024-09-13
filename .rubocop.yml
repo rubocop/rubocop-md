@@ -48,6 +48,7 @@ Layout/SpaceInsideStringInterpolation:
 Naming/FileName:
   Exclude:
     - 'lib/rubocop-md.rb'
+    - "*.md"
 
 Layout/LineLength:
   Max: 100
