@@ -2,7 +2,6 @@
 
 module RuboCop
   module Markdown # :nodoc:
-    # According to Linguist. mdx was dropped but is being kept for backwards compatibility.
     # See https://github.com/github-linguist/linguist/blob/8c380f360ce00b95fa08d14ce0ebccd481af1b33/lib/linguist/languages.yml#L4088-L4098
     # Keep in sync with config/default.yml
     MARKDOWN_EXTENSIONS = %w[
@@ -11,7 +10,6 @@ module RuboCop
       .markdown
       .mdown
       .mdwn
-      .mdx
       .mkd
       .mkdn
       .mkdown

@@ -68,7 +68,6 @@ class RuboCop::Markdown::AnalyzeTest < Minitest::Test
     assert_includes res, "file_extensions/02.markdown:"
     assert_includes res, "file_extensions/03.mdown:"
     assert_includes res, "file_extensions/04.mdwn:"
-    assert_includes res, "file_extensions/05.mdx:"
     assert_includes res, "file_extensions/06.mkd:"
     assert_includes res, "file_extensions/07.mkdn:"
     assert_includes res, "file_extensions/08.mkdown:"

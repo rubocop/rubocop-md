@@ -10,18 +10,17 @@ Markdown:
 # Keep in sync with MARKDOWN_EXTENSIONS
 Layout/CommentIndentation: &markdown_excludes
   Exclude:
-    - '**/*.md'
-    - '**/*.livemd'
-    - '**/*.markdown'
-    - '**/*.mdown'
-    - '**/*.mdwn'
-    - '**/*.mdx'
-    - '**/*.mkd'
-    - '**/*.mkdn'
-    - '**/*.mkdown'
-    - '**/*.ronn'
-    - '**/*.scd'
-    - '**/*.workbook'
+    - "**/*.md"
+    - "**/*.livemd"
+    - "**/*.markdown"
+    - "**/*.mdown"
+    - "**/*.mdwn"
+    - "**/*.mkd"
+    - "**/*.mkdn"
+    - "**/*.mkdown"
+    - "**/*.ronn"
+    - "**/*.scd"
+    - "**/*.workbook"
 
 Layout/LeadingCommentSpace:
   <<: *markdown_excludes
