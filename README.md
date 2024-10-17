@@ -55,7 +55,7 @@ rubocop -r "rubocop-md" -a ./lib
 
 Code in the documentation does not make sense to be checked for some style guidelines (eg `Style/FrozenStringLiteralComment`).
 
-We described such rules in the [default config](config/default.yml), but if you use the same settings in your project’s `.rubocop.yml` file, `RoboCop` will override them.
+We described such rules in the [default config](config/default.yml), but if you use the same settings in your project’s `.rubocop.yml` file, `RuboCop` will override them.
 
 Fortunately, `RuboCop` supports directory-level configuration and we can do the next trick.
 
