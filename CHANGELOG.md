@@ -2,6 +2,10 @@
 
 ## master (unreleased)
 
+## 1.2.4 (2024-10-16)
+
+- Fix RuboCop warnings.
+
 ## 1.2.3 (2024-09-12)
 
 - Do no try linting `.mdx` files by default.
