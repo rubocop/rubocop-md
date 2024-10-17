@@ -71,7 +71,7 @@ module RuboCop
       end
 
       def _investigate(_cop, processed_source)
-        team = RuboCop::Cop::Team.new(registry.cops, configuration, raise_error: true, autocorrect: true)
+        team = RuboCop::Cop::Team.mobilize(registry.cops, configuration, raise_error: true, autocorrect: true)
         report = team.investigate(processed_source)
         @last_corrector = report.correctors.compact.first || RuboCop::Cop::Corrector.new(processed_source)
         report.offenses
