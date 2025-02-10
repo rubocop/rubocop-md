@@ -39,16 +39,16 @@ Or install it yourself as:
 
 ### Command line
 
-Just require `rubocop-md` in your command:
+Just require `rubocop-md` plugin in your command:
 
 ```sh
-rubocop -r "rubocop-md" ./lib
+rubocop --plugin "rubocop-md" ./lib
 ```
 
 Autocorrect works too:
 
 ```sh
-rubocop -r "rubocop-md" -a ./lib
+rubocop --plugin "rubocop-md" -a ./lib
 ```
 
 ### Configuration
@@ -64,7 +64,7 @@ At first, add `rubocop-md` to your main `.rubocop.yml`:
 ```yml
 # .rubocop.yml
 
-require:
+plugins:
   - "rubocop-md"
 ```
 

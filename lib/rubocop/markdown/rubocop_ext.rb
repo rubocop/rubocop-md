@@ -24,25 +24,12 @@ module RuboCop
     class << self
       attr_accessor :config_store
 
-      # Merge markdown config into default configuration
-      # See https://github.com/backus/rubocop-rspec/blob/master/lib/rubocop/rspec/inject.rb
-      def inject!
-        path = CONFIG_DEFAULT.to_s
-        hash = ConfigLoader.send(:load_yaml_configuration, path)
-        config = Config.new(hash, path)
-        puts "configuration from #{path}" if ConfigLoader.debug?
-        config = ConfigLoader.merge_with_default(config, path)
-        ConfigLoader.instance_variable_set(:@default_configuration, config)
-      end
-
       def markdown_file?(file)
         MARKDOWN_EXTENSIONS.include?(File.extname(file))
       end
     end
   end
 end
-
-RuboCop::Markdown.inject!
 
 RuboCop::Runner.prepend(Module.new do
   # Set config store for Markdown

@@ -6,10 +6,9 @@ require "fileutils"
 
 module RuboCopRunner
   def run_rubocop(path, options: "", config: nil)
-    md_path = File.expand_path("../lib/rubocop-md.rb", __dir__)
     md_config_path = File.expand_path("./fixtures/.rubocop.yml", __dir__)
 
-    options = "#{options} -r #{md_path}" if ENV["MD_LOAD_MODE"] == "options"
+    options = "#{options} --plugin rubocop-md" if ENV["MD_LOAD_MODE"] == "options"
 
     if ENV["MD_LOAD_MODE"] == "config"
       # Add "_with_require" suffix
