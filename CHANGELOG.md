@@ -2,6 +2,10 @@
 
 ## master (unreleased)
 
+## 2.0.0 (2025-02-17)
+
+- Migrate to new RuboCop Plugin architecture.
+
 ## 1.2.4 (2024-10-16)
 
 - Fix RuboCop warnings.
