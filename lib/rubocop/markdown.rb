@@ -11,5 +11,6 @@ module RuboCop
 
     require_relative "markdown/preprocess"
     require_relative "markdown/rubocop_ext" if defined?(::RuboCop::ProcessedSource)
+    require_relative "markdown/plugin"
   end
 end
