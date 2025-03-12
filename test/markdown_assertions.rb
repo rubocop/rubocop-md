@@ -8,6 +8,8 @@ module RuboCop
     class Test < Minitest::Test
       include AssertOffense
 
+      TEST_FILE = File.expand_path(File.join(__dir__, "test.md"))
+
       class DummyCop
         def initialize
           @options = {}
@@ -21,12 +23,12 @@ module RuboCop
         end
       end
 
-      def assert_offense(source, file = "test.md", **replacements)
+      def assert_offense(source, file = TEST_FILE, **replacements)
         @cop = DummyCop.new
         super
       end
 
-      def assert_no_offenses(source, file = "test.md")
+      def assert_no_offenses(source, file = TEST_FILE)
         super
       end
 
@@ -35,6 +37,9 @@ module RuboCop
         raise "`assert_correction` must follow `assert_offense`" unless @processed_source
 
         iteration = 0
+        offenses = nil
+        offenses_by_iteration = []
+
         new_source = loop do
           iteration += 1
 
@@ -46,14 +51,17 @@ module RuboCop
           end
 
           if iteration > RuboCop::Runner::MAX_ITERATIONS
-            raise RuboCop::Runner::InfiniteCorrectionLoop.new(@processed_source.path, [])
+            raise RuboCop::Runner::InfiniteCorrectionLoop.new(@processed_source.path, offenses_by_iteration)
           end
 
           # Prepare for next loop
           RuboCop::Markdown::Preprocess.restore!(corrected_source)
           @processed_source = parse_source!(corrected_source)
 
-          _investigate(@cop, @processed_source)
+          offenses = _investigate(@cop, @processed_source)
+          offenses_by_iteration << offenses
+
+          break corrected_source unless offenses.any?
         end
 
         RuboCop::Markdown::Preprocess.restore!(new_source)
@@ -77,11 +85,11 @@ module RuboCop
         report.offenses
       end
 
-      def inspect_source(source, cop, file = "test.md")
+      def inspect_source(source, cop, file = TEST_FILE)
         super
       end
 
-      def parse_source!(source, file = "test.md")
+      def parse_source!(source, file = TEST_FILE)
         super
       end
 

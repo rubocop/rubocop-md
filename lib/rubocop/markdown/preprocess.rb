@@ -46,7 +46,7 @@ module RuboCop
         end
 
         def restore!(src)
-          src.gsub!(/^##{MARKER}/m, "")
+          src.gsub!(/^#\s*#{MARKER}/m, "")
         end
       end
 

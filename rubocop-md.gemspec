@@ -20,7 +20,8 @@ Gem::Specification.new do |spec|
     "changelog_uri" => "https://github.com/rubocop/rubocop-md/blob/master/CHANGELOG.md",
     "documentation_uri" => "https://github.com/rubocop/rubocop-md/blob/master/README.md",
     "homepage_uri" => "https://github.com/rubocop/rubocop-md",
-    "source_code_uri" => "http://github.com/rubocop/rubocop-md"
+    "source_code_uri" => "http://github.com/rubocop/rubocop-md",
+    "default_lint_roller_plugin" => "RuboCop::Markdown::Plugin"
   }
 
   spec.metadata['default_lint_roller_plugin'] = 'RuboCop::Markdown::Plugin'
