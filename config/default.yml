@@ -25,9 +25,6 @@ Layout/CommentIndentation: &markdown_excludes
 Layout/LeadingCommentSpace:
   <<: *markdown_excludes
 
-Layout/TrailingBlankLines:
-  <<: *markdown_excludes
-
 Layout/TrailingEmptyLines:
   <<: *markdown_excludes
 
