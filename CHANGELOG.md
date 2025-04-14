@@ -2,6 +2,10 @@
 
 ## master (unreleased)
 
+## 2.0.1 (2025-04-14)
+
+- Remove `Layout/TrailingBlankLines`.
+
 ## 2.0.0 (2025-02-17)
 
 - Migrate to new RuboCop Plugin architecture.
