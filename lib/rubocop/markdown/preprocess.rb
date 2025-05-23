@@ -94,7 +94,7 @@ module RuboCop
 
       # Check codeblack attribute if it's defined and of Ruby type
       def ruby?(syntax)
-        RUBY_TYPES.include?(syntax)
+        RUBY_TYPES.include?(syntax.split.first)
       end
 
       # Try to parse with Ripper
