@@ -2,6 +2,10 @@
 
 ## master (unreleased)
 
+## 2.0.2 (2025-08-20)
+
+- Support metadata in code blocks.
+
 ## 2.0.1 (2025-04-14)
 
 - Remove `Layout/TrailingBlankLines`.
