@@ -243,6 +243,38 @@ class RuboCop::Markdown::PreprocessTest < Minitest::Test
     assert_equal expected, subject.call(source)
   end
 
+  def test_ruby_snippet_with_metadata
+    source = <<~SOURCE
+      # Header
+
+      Code example:
+
+      ```ruby test_valid_example
+      class Test < Minitest::Test
+        def test_valid
+          assert false
+        end
+      end
+      ```
+    SOURCE
+
+    expected = <<~SOURCE
+      #<--rubocop/md--># Header
+      #<--rubocop/md-->
+      #<--rubocop/md-->Code example:
+      #<--rubocop/md-->
+      #<--rubocop/md-->```ruby test_valid_example
+      class Test < Minitest::Test
+        def test_valid
+          assert false
+        end
+      end
+      #<--rubocop/md-->```
+    SOURCE
+
+    assert_equal expected, subject.call(source)
+  end
+
   def test_snippet_with_unclosed_backtick
     source = <<~SOURCE
       # Code example:
