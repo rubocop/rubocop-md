@@ -33,7 +33,7 @@ end
 
 RuboCop::Runner.prepend(Module.new do
   # Set config store for Markdown
-  def get_processed_source(*args)
+  def get_processed_source(*args, **kwargs)
     RuboCop::Markdown.config_store = @config_store unless RuboCop::Markdown.config_store
 
     super
