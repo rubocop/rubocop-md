@@ -33,7 +33,7 @@ end
 
 RuboCop::Runner.prepend(Module.new do
   # Set config store for Markdown
-  def get_processed_source(*args, **kwargs)
+  def get_processed_source(...)
     RuboCop::Markdown.config_store = @config_store unless RuboCop::Markdown.config_store
 
     super
@@ -41,13 +41,13 @@ RuboCop::Runner.prepend(Module.new do
 
   # Do not cache markdown files, 'cause cache doesn't know about processing.
   # NOTE: we should involve preprocessing in RuboCop::CachedData#deserialize_offenses
-  def file_offense_cache(file, *args, **kwargs)
+  def file_offense_cache(file, ...)
     return yield if RuboCop::Markdown.markdown_file?(file)
 
     super
   end
 
-  def file_finished(file, offenses, *args, **kwargs)
+  def file_finished(file, offenses, ...)
     return super unless RuboCop::Markdown.markdown_file?(file)
 
     # Run Preprocess.restore if file has been autocorrected
@@ -75,14 +75,14 @@ end)
 
 # Allow Rubocop to analyze markdown files
 RuboCop::TargetFinder.prepend(Module.new do
-  def ruby_file?(file, *args, **kwargs)
+  def ruby_file?(file, ...)
     super || RuboCop::Markdown.markdown_file?(file)
   end
 end)
 
 # Extend ProcessedSource#parse with pre-processing
 RuboCop::ProcessedSource.prepend(Module.new do
-  def parse(src, *args, **kwargs)
+  def parse(src, ...)
     # only process Markdown files
     src = RuboCop::Markdown::Preprocess.new(path).call(src) if
       path && RuboCop::Markdown.markdown_file?(path)
