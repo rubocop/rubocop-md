@@ -2,6 +2,10 @@
 
 ## master (unreleased)
 
+## 2.0.3 (2025-09-30)
+
+- Fix compatibility with RuboCop upstream (`get_processed_source` signature)
+
 ## 2.0.2 (2025-08-20)
 
 - Support metadata in code blocks.
