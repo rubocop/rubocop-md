@@ -366,4 +366,99 @@ class RuboCop::Markdown::OffenseTest < RuboCop::Markdown::Test
       That's it.
     MARKDOWN
   end
+
+  def test_snippets_with_disabled_cops
+    assert_offense(<<~MARKDOWN)
+      All cops disabled
+
+      <span style="display:none;"># rubocop:disable all</span>
+      ```ruby
+      def blank_method
+      end
+      ```
+      <span style="display:none;"># rubocop:enable all</span>
+
+      All cops disabled as todos
+
+      <span style="display:none;"># rubocop:todo all</span>
+      ```ruby
+      def blank_method
+      end
+      ```
+      <span style="display:none;"># rubocop:enable all</span>
+
+      Cops disabled explicitly
+
+      <span style="display:none;"># rubocop:disable Style/EmptyMethod, Style/ArrayJoin</span>
+      ```ruby
+      def blank_method
+      end
+
+      %w[foo bar baz] * ","
+      ```
+      <span style="display:none;"># rubocop:enable Style/EmptyMethod, Style/ArrayJoin</span>
+
+      Cops disabled inside Ruby block
+
+      ```ruby
+      # rubocop:disable all
+      def blank_method
+      end
+      # rubocop:enable all
+      ```
+
+      Actually failing cop (correctable)
+
+      ```ruby
+      %w[foo bar baz] * ","
+                      ^ Style/ArrayJoin: Favor `Array#join` over `Array#*`.
+      ```
+    MARKDOWN
+
+    assert_correction(<<~MARKDOWN)
+      All cops disabled
+
+      <span style="display:none;"># rubocop:disable all</span>
+      ```ruby
+      def blank_method
+      end
+      ```
+      <span style="display:none;"># rubocop:enable all</span>
+
+      All cops disabled as todos
+
+      <span style="display:none;"># rubocop:todo all</span>
+      ```ruby
+      def blank_method
+      end
+      ```
+      <span style="display:none;"># rubocop:enable all</span>
+
+      Cops disabled explicitly
+
+      <span style="display:none;"># rubocop:disable Style/EmptyMethod, Style/ArrayJoin</span>
+      ```ruby
+      def blank_method
+      end
+
+      %w[foo bar baz] * ","
+      ```
+      <span style="display:none;"># rubocop:enable Style/EmptyMethod, Style/ArrayJoin</span>
+
+      Cops disabled inside Ruby block
+
+      ```ruby
+      # rubocop:disable all
+      def blank_method
+      end
+      # rubocop:enable all
+      ```
+
+      Actually failing cop (correctable)
+
+      ```ruby
+      %w[foo bar baz].join(",")
+      ```
+    MARKDOWN
+  end
 end
