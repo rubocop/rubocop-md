@@ -39,13 +39,33 @@ RuboCop::Runner.prepend(Module.new do
     super
   end
 
-  # Do not cache markdown files, 'cause cache doesn't know about processing.
+  # Only cache markdown files if they have no offenses, 'cause cache doesn't know about processing.
   # NOTE: we should involve preprocessing in RuboCop::CachedData#deserialize_offenses
+  # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity
   def file_offense_cache(file, ...)
-    return yield if RuboCop::Markdown.markdown_file?(file)
+    if cached_run? && RuboCop::Markdown.markdown_file?(file)
+      config = @config_store.for_file(file)
+      cache = cached_result(file, standby_team(config))
 
-    super
+      if cache&.valid?
+        offenses = cache.load
+
+        real_run_needed = offenses.any?
+      else
+        real_run_needed = true
+      end
+
+      if real_run_needed
+        offenses = yield
+        save_in_cache(cache, offenses) if offenses.empty?
+      end
+
+      offenses
+    else
+      super
+    end
   end
+  # rubocop:enable Metrics/MethodLength, Metrics/PerceivedComplexity
 
   def file_finished(file, offenses, ...)
     return super unless RuboCop::Markdown.markdown_file?(file)
