@@ -2,6 +2,10 @@
 
 ## master (unreleased)
 
+## 2.0.4 (2026-01-28)
+
+- Enable caching when no offenses detected.
+
 ## 2.0.3 (2025-09-30)
 
 - Fix compatibility with RuboCop upstream (`get_processed_source` signature)
