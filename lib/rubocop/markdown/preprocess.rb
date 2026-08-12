@@ -56,29 +56,22 @@ module RuboCop
         @config = Markdown.config_store.for(file)
       end
 
-      # rubocop:disable Metrics/MethodLength
       def call(src)
         src.gsub(MD_REGEXP) do |full_match|
-          m = Regexp.last_match
-          open_backticks = m[1]
-          syntax = m[2]
-          code = m[3]
-          close_backticks = m[4]
-          markdown = m[5]
+          open_backticks, syntax, code, close_backticks, markdown = Regexp.last_match.captures
 
           if markdown
             # We got markdown outside of a codeblock
-            comment_lines(markdown)
+            mark_lines(markdown)
           elsif ruby_codeblock?(syntax, code)
             # The codeblock we parsed is assumed ruby, keep as is and append markers to backticks
-            "#{comment_lines(open_backticks + syntax)}\n#{code}#{comment_lines(close_backticks)}"
+            "#{mark_lines(open_backticks + syntax)}\n#{code}#{mark_lines(close_backticks)}"
           else
             # The codeblock is not relevant, comment it out
-            comment_lines(full_match)
+            mark_lines(full_match)
           end
         end
       end
-      # rubocop:enable Metrics/MethodLength
 
       private
 
@@ -117,7 +110,7 @@ module RuboCop
         config["Markdown"]&.fetch("Autodetect", true)
       end
 
-      def comment_lines(src)
+      def mark_lines(src)
         src.gsub(/^/, "##{MARKER}")
       end
     end

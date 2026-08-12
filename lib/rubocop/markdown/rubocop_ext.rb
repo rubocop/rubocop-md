@@ -21,6 +21,12 @@ module RuboCop
     # A list of cops that could produce offenses in commented lines
     MARKDOWN_OFFENSE_COPS = %w[Lint/Syntax].freeze
 
+    DIRECTIVE_COMMENT_REGEXP = /
+      (<span\s+style="display:none;">)?
+      #{RuboCop::DirectiveComment::DIRECTIVE_COMMENT_REGEXP}
+      (<\/span>)?
+    /x.freeze
+
     class << self
       attr_accessor :config_store
 
@@ -84,10 +90,11 @@ RuboCop::Cop::Commissioner::InvestigationReport.prepend(Module.new do
   def offenses
     @offenses ||= begin
       marker_comment = "##{RuboCop::Markdown::Preprocess::MARKER}"
+
       offenses_per_cop.flatten(1).reject do |offense|
         next if RuboCop::Markdown::MARKDOWN_OFFENSE_COPS.include?(offense.cop_name)
 
-        offense.location.source_line.start_with?(marker_comment)
+        offense.disabled? || offense.location.source_line.start_with?(marker_comment)
       end
     end
   end
@@ -107,5 +114,12 @@ RuboCop::ProcessedSource.prepend(Module.new do
     src = RuboCop::Markdown::Preprocess.new(path).call(src) if
       path && RuboCop::Markdown.markdown_file?(path)
     super
+  end
+end)
+
+# Treat span'ed comments as the range comments, not single line comments
+RuboCop::DirectiveComment.prepend(Module.new do
+  def single_line?
+    !comment.text.match?(RuboCop::Markdown::DIRECTIVE_COMMENT_REGEXP)
   end
 end)
