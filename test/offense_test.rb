@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "test_helper"
+require "tmpdir"
 
 class RuboCop::Markdown::OffenseTest < RuboCop::Markdown::Test
   def overwrite_config
@@ -247,6 +248,89 @@ class RuboCop::Markdown::OffenseTest < RuboCop::Markdown::Test
 
       { complex_symbol: 0 }
     RUBY
+  end
+
+  def test_hidden_directives
+    [
+      ['<span style="display:none;">', "</span>", "disable", "all"],
+      ['<span style="display:none;">', "</span>", "todo", "all"],
+      ['<span style="display:none;">', "</span>", "disable", "Style/EmptyMethod, Style/ArrayJoin"],
+      ['<span style="display:none;">', "</span>", "todo", "Style/EmptyMethod, Style/ArrayJoin"],
+      ["<!-- ", " -->", "disable", "all"],
+      ["<!-- ", " -->", "disable", "Style/EmptyMethod, Style/ArrayJoin"]
+    ].each do |opening, closing, action, cops|
+      assert_offense(<<~MARKDOWN)
+        #{opening}# rubocop:#{action} #{cops}#{closing}
+
+        ```ruby
+        def blank_method
+        end
+        %w[disabled values] * ","
+        ```
+
+        #{opening}# rubocop:enable #{cops}#{closing}
+
+        ```ruby
+        %w[foo bar baz] * ","
+                        ^ Style/ArrayJoin: Favor `Array#join` over `Array#*`.
+        ```
+      MARKDOWN
+
+      assert_correction(<<~MARKDOWN)
+        #{opening}# rubocop:#{action} #{cops}#{closing}
+
+        ```ruby
+        def blank_method
+        end
+        %w[disabled values] * ","
+        ```
+
+        #{opening}# rubocop:enable #{cops}#{closing}
+
+        ```ruby
+        %w[foo bar baz].join(",")
+        ```
+      MARKDOWN
+    end
+  end
+
+  def test_directives_inside_ruby_snippets
+    assert_no_offenses(<<~MARKDOWN)
+      ```ruby
+      # rubocop:disable all
+      def blank_method
+      end
+      # rubocop:enable all
+      ```
+    MARKDOWN
+  end
+
+  def test_disabled_offenses_remain_available
+    source = <<~MARKDOWN
+      <span style="display:none;"># rubocop:disable Style/EmptyMethod</span>
+
+      ```ruby
+      def blank_method
+      end
+      ```
+    MARKDOWN
+    cop = RuboCop::Cop::Style::EmptyMethod.new(configuration)
+    commissioner = RuboCop::Cop::Commissioner.new([cop], [], raise_error: true)
+    report = commissioner.investigate(parse_source!(source))
+
+    assert_equal [true], report.offenses.map(&:disabled?)
+  end
+
+  def test_hidden_directives_do_not_change_ruby_files
+    Dir.mktmpdir("rubocop-md") do |directory|
+      assert_offense(<<~RUBY, File.join(directory, "example.rb"))
+        # frozen_string_literal: true
+
+        #<--rubocop/md--><span style="display:none;"># rubocop:disable Style/StringLiterals</span>
+        puts 'hello'
+             ^^^^^^^ Style/StringLiterals: Prefer double-quoted strings unless you need single quotes to avoid extra backslashes for escaping.
+      RUBY
+    end
   end
 
   def test_non_code_offenses

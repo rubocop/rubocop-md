@@ -125,9 +125,9 @@ Indented code blocks are treated as unlabeled snippets: they are checked when `M
 
 The original Markdown remains available through `processed_source.markdown_document.buffer` for prose plugins such as `rubocop-spellcheck`. `processed_source.buffer` retains the preprocessed Ruby source expected by Ruby cops. Prose ranges can be mapped with `markdown_document.processed_range`; diagnostics and corrections from either buffer retain their original Markdown locations and can be combined in the same run.
 
-### But if I want to use inline disabling some directive like in classic RuboCop?
+### Disabling cops
 
-You can use this tricks
+Use normal `# rubocop:disable`, `# rubocop:todo`, and `# rubocop:enable` directives inside Ruby code blocks. To disable cops across code blocks without displaying the directives in the rendered document, wrap them in hidden spans:
 
 ````md
 # my_post.md
@@ -148,6 +148,18 @@ end of snippet
 
 ... continuation of article ...
 ````
+
+HTML comments work too, and you can name individual cops instead of `all`:
+
+```md
+<!-- # rubocop:disable Style/EmptyMethod, Style/ArrayJoin -->
+
+Your Ruby code blocks here.
+
+<!-- # rubocop:enable Style/EmptyMethod, Style/ArrayJoin -->
+```
+
+Autocorrection preserves the HTML wrappers and does not apply corrections for disabled cops.
 
 ## How it works?
 

@@ -195,4 +195,35 @@ class RuboCop::Markdown::AnalyzeTest < Minitest::Test
       refute_includes output, RuboCop::Markdown::Preprocess::MARKER
     end
   end
+
+  def test_hidden_directives_with_autocorrection
+    source = <<~MARKDOWN
+      <span style="display:none;"># rubocop:disable Style/StringLiterals</span>
+
+      ```ruby
+      puts 'disabled'
+      puts(1,2)
+      ```
+
+      <span style="display:none;"># rubocop:enable Style/StringLiterals</span>
+
+      ```ruby
+      puts 'enabled'
+      ```
+    MARKDOWN
+    Dir.mktmpdir("rubocop-md") do |directory|
+      file = File.join(directory, "example.md")
+      File.write(file, source)
+      options = "--format simple --cache false --only Style/StringLiterals,Layout/SpaceAfterComma"
+      output = run_rubocop(file, options: options, config: "configs/config.yml")
+
+      assert_includes output, "2 offenses detected"
+      assert_includes output, "Layout/SpaceAfterComma"
+      assert_includes output, "Style/StringLiterals"
+
+      run_rubocop(file, options: "#{options} -a", config: "configs/config.yml")
+      expected = source.sub("puts(1,2)", "puts(1, 2)").sub("puts 'enabled'", 'puts "enabled"')
+      assert_equal expected, File.read(file)
+    end
+  end
 end

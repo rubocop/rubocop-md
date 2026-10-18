@@ -5,6 +5,7 @@
 - Preserve the original Markdown buffer for prose plugins and combine original-source edits with Ruby snippet corrections ([#55](https://github.com/rubocop/rubocop-md/pull/55), [@dblock][], [@Copilot][]).
 - Replace standalone regex-based snippet extraction with a reusable Markdown document parser, supporting tilde fences, indented code, and code blocks inside lists and blockquotes while preserving their source prefixes during autocorrection ([#51](https://github.com/rubocop/rubocop-md/pull/51), [@dblock][], [@Copilot][]).
 - Fix false indentation offenses in and after list-nested code blocks ([#28](https://github.com/rubocop/rubocop-md/issues/28), [#51](https://github.com/rubocop/rubocop-md/pull/51), [@dblock][], [@Copilot][]).
+- Fix `rubocop:disable`, `rubocop:todo`, and `rubocop:enable` directives wrapped in spans or HTML comments outside Ruby code blocks ([#52](https://github.com/rubocop/rubocop-md/pull/52), [@dblock][], [@ocvit][], [@Copilot][]).
 
 ## 2.0.4 (2026-01-28)
 
@@ -95,3 +96,4 @@ Change the default config to use the new cop names for (e.g., `Layout/LineLength
 [@sfeuga]: https://github.com/sfeuga
 [@dblock]: https://github.com/dblock
 [@Copilot]: https://github.com/Copilot
+[@ocvit]: https://github.com/ocvit

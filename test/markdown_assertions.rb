@@ -77,7 +77,7 @@ module RuboCop
         team = RuboCop::Cop::Team.mobilize(registry.cops, configuration, raise_error: true, autocorrect: true)
         report = team.investigate(processed_source)
         @last_corrector = report.correctors.compact.first || RuboCop::Cop::Corrector.new(processed_source)
-        report.offenses
+        report.offenses.reject(&:disabled?)
       end
 
       def inspect_source(source, cop, file = TEST_FILE)
