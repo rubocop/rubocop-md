@@ -56,7 +56,6 @@ module RuboCop
         @config = Markdown.config_store.for(file)
       end
 
-      # rubocop:disable Metrics/MethodLength
       def call(src)
         src.gsub(MD_REGEXP) do |full_match|
           m = Regexp.last_match
@@ -78,7 +77,6 @@ module RuboCop
           end
         end
       end
-      # rubocop:enable Metrics/MethodLength
 
       private
 

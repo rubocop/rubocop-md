@@ -3,6 +3,7 @@
 require "test_helper"
 require "open3"
 require "fileutils"
+require "tmpdir"
 
 module RuboCopRunner
   def run_rubocop(path, options: "", config: nil)
@@ -74,5 +75,36 @@ class RuboCop::Markdown::AnalyzeTest < Minitest::Test
     assert_includes res, "file_extensions/10.workbook:"
     assert_includes res, "file_extensions/11.livemd:"
     assert_includes res, "file_extensions/12.scd:"
+  end
+
+  def test_hidden_directives_with_autocorrection
+    source = <<~MARKDOWN
+      <span style="display:none;"># rubocop:disable Style/StringLiterals</span>
+
+      ```ruby
+      puts 'disabled'
+      puts(1,2)
+      ```
+
+      <span style="display:none;"># rubocop:enable Style/StringLiterals</span>
+
+      ```ruby
+      puts 'enabled'
+      ```
+    MARKDOWN
+    Dir.mktmpdir("rubocop-md") do |directory|
+      file = File.join(directory, "example.md")
+      File.write(file, source)
+      options = "--format simple --cache false --only Style/StringLiterals,Layout/SpaceAfterComma"
+      output = run_rubocop(file, options: options, config: "configs/config.yml")
+
+      assert_includes output, "2 offenses detected"
+      assert_includes output, "Layout/SpaceAfterComma"
+      assert_includes output, "Style/StringLiterals"
+
+      run_rubocop(file, options: "#{options} -a", config: "configs/config.yml")
+      expected = source.sub("puts(1,2)", "puts(1, 2)").sub("puts 'enabled'", 'puts "enabled"')
+      assert_equal expected, File.read(file)
+    end
   end
 end

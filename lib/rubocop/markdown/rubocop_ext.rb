@@ -41,7 +41,6 @@ RuboCop::Runner.prepend(Module.new do
 
   # Only cache markdown files if they have no offenses, 'cause cache doesn't know about processing.
   # NOTE: we should involve preprocessing in RuboCop::CachedData#deserialize_offenses
-  # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity
   def file_offense_cache(file, ...)
     if cached_run? && RuboCop::Markdown.markdown_file?(file)
       config = @config_store.for_file(file)
@@ -65,7 +64,6 @@ RuboCop::Runner.prepend(Module.new do
       super
     end
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/PerceivedComplexity
 
   def file_finished(file, offenses, ...)
     return super unless RuboCop::Markdown.markdown_file?(file)
@@ -102,10 +100,36 @@ end)
 
 # Extend ProcessedSource#parse with pre-processing
 RuboCop::ProcessedSource.prepend(Module.new do
+  def comments
+    return super unless path && RuboCop::Markdown.markdown_file?(path)
+
+    @markdown_comments ||= super.map { |comment| markdown_directive(comment) || comment }
+  end
+
   def parse(src, ...)
     # only process Markdown files
-    src = RuboCop::Markdown::Preprocess.new(path).call(src) if
-      path && RuboCop::Markdown.markdown_file?(path)
+    if path && RuboCop::Markdown.markdown_file?(path)
+      @markdown_comments = nil
+      src = RuboCop::Markdown::Preprocess.new(path).call(src)
+    end
     super
+  end
+
+  private
+
+  def markdown_directive(comment)
+    return unless comment.text.start_with?("##{RuboCop::Markdown::Preprocess::MARKER}")
+
+    match = comment.text.match(
+      /(?:<!--|<span\b[^>]*>)\s*(#\s*rubocop:[^\n]*?)\s*(?:-->|<\/span>)\s*\z/
+    )
+    return unless match
+
+    location = comment.source_range
+    range = Parser::Source::Range.new(
+      location.source_buffer,
+      location.begin_pos + match.begin(1), location.begin_pos + match.end(1)
+    )
+    Parser::Source::Comment.new(range)
   end
 end)
