@@ -32,7 +32,6 @@ module RuboCop
         super
       end
 
-      # rubocop:disable Metrics/AbcSize
       def assert_correction(correction, loop: true)
         raise "`assert_correction` must follow `assert_offense`" unless @processed_source
 
@@ -55,7 +54,6 @@ module RuboCop
           end
 
           # Prepare for next loop
-          RuboCop::Markdown::Preprocess.restore!(corrected_source)
           @processed_source = parse_source!(corrected_source)
 
           offenses = _investigate(@cop, @processed_source)
@@ -64,13 +62,10 @@ module RuboCop
           break corrected_source unless offenses.any?
         end
 
-        RuboCop::Markdown::Preprocess.restore!(new_source)
-
         assert_equal(correction, new_source)
       ensure
         FileUtils.rm_f(@processed_source.path)
       end
-      # rubocop:enable Metrics/AbcSize
 
       def investigate(_cop, processed_source)
         commissioner = RuboCop::Cop::Commissioner.new(registry.cops, registry.class.forces_for(registry.cops), raise_error: true)

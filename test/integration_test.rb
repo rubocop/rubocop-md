@@ -3,6 +3,7 @@
 require "test_helper"
 require "open3"
 require "fileutils"
+require "tmpdir"
 
 module RuboCopRunner
   def run_rubocop(path, options: "", config: nil)
@@ -74,5 +75,60 @@ class RuboCop::Markdown::AnalyzeTest < Minitest::Test
     assert_includes res, "file_extensions/10.workbook:"
     assert_includes res, "file_extensions/11.livemd:"
     assert_includes res, "file_extensions/12.scd:"
+  end
+
+  def test_parser_based_autocorrection
+    Dir.mktmpdir("rubocop-md") do |directory|
+      config = File.join(directory, ".rubocop.yml")
+      File.write(config, <<~YAML)
+        plugins:
+          - rubocop-md
+        AllCops:
+          NewCops: enable
+          SuggestExtensions: false
+        Style/StringLiterals:
+          EnforcedStyle: double_quotes
+      YAML
+      source = <<~MARKDOWN
+        First paragraph
+        stays wrapped.
+
+        ```ruby example
+        puts 'hello'
+        ```
+
+        > ~~~ruby
+        > puts 'quoted'
+        > ~~~
+
+        - Example:
+
+          `````ruby
+          puts 'listed'
+          `````
+
+        # Indented
+
+            puts 'indented'
+      MARKDOWN
+      expected = source.gsub(/'(hello|quoted|listed|indented)'/, '"\1"')
+      file = File.join(directory, "example.md")
+      File.write(file, source)
+      arguments = ["bundle", "exec", "rubocop", "--config", config, "--cache", "false", "-a"]
+      output, status = Open3.capture2e(*arguments, file)
+
+      assert status.success?, output
+      assert_equal expected, File.read(file)
+      output, status = Open3.capture2e(*arguments, file)
+      assert status.success?, output
+      assert_includes output, "no offenses detected"
+
+      stdin_source = "> ~~~ruby\n> puts 'stdin'\n> ~~~\n"
+      output, status = Open3.capture2e(*arguments, "--stdin", file, stdin_data: stdin_source)
+      assert status.success?, output
+      assert_includes output, "> puts \"stdin\""
+      refute_includes output, RuboCop::Markdown::Preprocess::MARKER
+      assert_equal expected, File.read(file)
+    end
   end
 end

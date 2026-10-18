@@ -249,28 +249,75 @@ class RuboCop::Markdown::OffenseTest < RuboCop::Markdown::Test
     RUBY
   end
 
-  # rubocop:disable Layout/TrailingWhitespace
+  # rubocop:disable-next Layout/TrailingWhitespace
   def test_non_code_offenses
     assert_no_offenses(<<~MARKDOWN)
       # No Code
 
-      Just a line with a trailining whitespace 
+      Just a line with a trailing whitespace 
 
     MARKDOWN
   end
-  # rubocop:enable Layout/TrailingWhitespace
 
   def test_backticks_in_code
-    assert_offense(<<~MARKDOWN, marker: "##{RuboCop::Markdown::Preprocess::MARKER}")
+    assert_offense(<<~MARKDOWN)
       ```ruby
       `method_call
       ```
-      _{marker} ^ Lint/Syntax: unexpected token tXSTRING_BEG
+       ^ Lint/Syntax: unexpected token tXSTRING_BEG
 
 
       ```ruby
       further_code("", '')
       ```
+    MARKDOWN
+  end
+
+  def test_quoted_snippet_locations_and_autocorrection
+    assert_offense(<<~MARKDOWN)
+      > ```ruby
+      > puts 'hello'
+             ^^^^^^^ Style/StringLiterals: Prefer double-quoted strings unless you need single quotes to avoid extra backslashes for escaping.
+      > ```
+    MARKDOWN
+
+    assert_correction(<<~MARKDOWN)
+      > ```ruby
+      > puts "hello"
+      > ```
+    MARKDOWN
+  end
+
+  def test_list_indentation_does_not_affect_following_snippets
+    assert_no_offenses(<<~MARKDOWN)
+      1. Some header
+
+          ```rb
+          some_code
+          ```
+
+      ```rb
+      this_should_be_all_good!
+      ```
+    MARKDOWN
+  end
+
+  def test_ruby_indentation_inside_list_snippets
+    assert_offense(<<~MARKDOWN)
+      1. Some header
+
+          ```rb
+            some_code
+            ^^^^^^^^^ Layout/InitialIndentation: Indentation of first line in file detected.
+          ```
+    MARKDOWN
+
+    assert_correction(<<~MARKDOWN)
+      1. Some header
+
+          ```rb
+          some_code
+          ```
     MARKDOWN
   end
 

@@ -7,19 +7,6 @@ module RuboCop
     # Transform source Markdown file into valid Ruby file
     # by commenting out all non-code lines
     class Preprocess
-      # This is a regexp to parse code blocks from .md files.
-      #
-      # Only recognizes backticks-style code blocks.
-      #
-      # Try it: https://rubular.com/r/YMqSWiBuh2TKIJ
-      MD_REGEXP = /
-        ^([[:blank:]]*`{3,4}) # Match opening backticks
-        ([\w[[:blank:]]+]*)?\n # Match the code block syntax
-        ([\s\S]+?) # Match everything inside the code block
-        (^[[:blank:]]*\1[[:blank:]]*\n?) # Match closing backticks
-        |(^.*$) # If we are not in a codeblock, match the whole line
-      /x.freeze
-
       MARKER = "<--rubocop/md-->"
 
       # See https://github.com/github/linguist/blob/v5.3.3/lib/linguist/languages.yml#L3925
@@ -33,18 +20,7 @@ module RuboCop
       ].freeze
 
       class << self
-        # Revert preprocess changes.
-        #
-        # When autocorrect is applied, RuboCop re-writes the file
-        # using preproccessed source buffer.
-        #
-        # We have to restore it.
-        def restore_and_save!(file)
-          contents = File.read(file)
-          restore!(contents)
-          File.write(file, contents)
-        end
-
+        # Remove preprocessing markers from correction text.
         def restore!(src)
           src.gsub!(/^#\s*#{MARKER}/m, "")
         end
@@ -53,32 +29,23 @@ module RuboCop
       attr_reader :config
 
       def initialize(file)
+        @file = file
         @config = Markdown.config_store.for(file)
       end
 
-      # rubocop:disable Metrics/MethodLength
-      def call(src)
-        src.gsub(MD_REGEXP) do |full_match|
-          m = Regexp.last_match
-          open_backticks = m[1]
-          syntax = m[2]
-          code = m[3]
-          close_backticks = m[4]
-          markdown = m[5]
+      def call(src, document: Document.new(src, @file))
+        code = {}
+        document.code_blocks.each do |block|
+          syntax = block.options[:lang].to_s
+          lines = block.options.fetch(:code_lines)
+          next unless ruby_codeblock?(syntax, "#{lines.join("\n")}\n")
 
-          if markdown
-            # We got markdown outside of a codeblock
-            comment_lines(markdown)
-          elsif ruby_codeblock?(syntax, code)
-            # The codeblock we parsed is assumed ruby, keep as is and append markers to backticks
-            "#{comment_lines(open_backticks + syntax)}\n#{code}#{comment_lines(close_backticks)}"
-          else
-            # The codeblock is not relevant, comment it out
-            comment_lines(full_match)
-          end
+          code.merge!(document.code_lines(block))
         end
+        src.lines.each_with_index.map do |line, index|
+          code.key?(index + 1) ? code.fetch(index + 1) + line[/\r?\n\z/].to_s : comment_lines(line)
+        end.join
       end
-      # rubocop:enable Metrics/MethodLength
 
       private
 

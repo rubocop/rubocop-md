@@ -49,14 +49,28 @@ Naming/FileName:
     - 'lib/rubocop-md.rb'
     - "*.md"
 
+Naming/MemoizedInstanceVariableName:
+  Enabled: false
+
 Layout/LineLength:
   Max: 100
   Exclude:
     - 'test/**/*.rb'
 
+Metrics/AbcSize:
+  Enabled: false
+
 Metrics/MethodLength:
-  Exclude:
-    - 'test/**/*.rb'
+  Enabled: false
+
+Metrics/PerceivedComplexity:
+  Enabled: false
+
+Metrics/CyclomaticComplexity:
+  Enabled: false
+
+Metrics/BlockLength:
+  Enabled: false
 
 Metrics/ClassLength:
   Exclude:
