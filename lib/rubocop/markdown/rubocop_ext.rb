@@ -30,6 +30,7 @@ module RuboCop
 
       def ignored_offense?(cop_name, location)
         return false if MARKDOWN_OFFENSE_COPS.include?(cop_name)
+        return false if location.is_a?(Document::ProseRange)
 
         location.source_line.start_with?("##{Preprocess::MARKER}")
       end
@@ -92,11 +93,21 @@ RuboCop::Cop::Corrector.prepend(Module.new do
   def initialize(source)
     processed = source.respond_to?(:processed_source) ? source.processed_source : source
     @markdown_document = processed.markdown_document if processed.respond_to?(:markdown_document)
-    super
+    super(@markdown_document ? @markdown_document.processed_buffer : source)
   end
 
   def rewrite
     @markdown_document ? @markdown_document.corrected_source(self) : super
+  end
+
+  private
+
+  def to_range(node_or_range)
+    if @markdown_document && node_or_range.is_a?(Parser::Source::Range) &&
+       node_or_range.source_buffer.equal?(@markdown_document.buffer)
+      node_or_range = @markdown_document.processed_range(node_or_range)
+    end
+    super
   end
 end)
 
@@ -127,6 +138,6 @@ RuboCop::ProcessedSource.prepend(Module.new do
       src = RuboCop::Markdown::Preprocess.new(path).call(src, document: @markdown_document)
     end
     super
-    @markdown_document.processed_buffer = buffer if @markdown_document
+    @markdown_document.processed_buffer = @buffer if @markdown_document
   end
 end)

@@ -407,4 +407,26 @@ class RuboCop::Markdown::PreprocessTest < Minitest::Test
 
     assert_equal 1, calls
   end
+
+  def test_processed_source_preserves_markdown_buffer_and_maps_each_range_once
+    source = "😀 wrld\n\n> ```ruby\n> puts 'hello'\n> ```\n"
+    processed = RuboCop::ProcessedSource.new(source, 2.7, "test.md")
+    document = processed.markdown_document
+
+    assert_equal source, document.buffer.source
+    assert_same document.processed_buffer, processed.buffer
+    assert_same processed.ast.source_range.source_buffer, processed.buffer
+    original = document.range(1, 2, 1, 6)
+    assert_same original, document.original_range(original)
+    assert_equal original, document.original_range(document.processed_range(original))
+    ruby = processed.ast.source_range
+    assert_same ruby, document.processed_range(ruby)
+    assert_equal "puts 'hello'", document.original_range(ruby).source
+
+    corrector = RuboCop::Cop::Corrector.new(processed)
+    corrector.replace(original, "world")
+    corrector.replace(processed.ast.children.last.source_range, '"world"')
+    expected = "😀 world\n\n> ```ruby\n> puts \"world\"\n> ```\n"
+    assert_equal expected, corrector.rewrite
+  end
 end

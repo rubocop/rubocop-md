@@ -131,4 +131,68 @@ class RuboCop::Markdown::AnalyzeTest < Minitest::Test
       assert_equal expected, File.read(file)
     end
   end
+
+  def test_prose_cop_can_read_and_correct_the_original_buffer_alongside_ruby_cops
+    Dir.mktmpdir("rubocop-md") do |directory|
+      File.write(File.join(directory, "prose.rb"), <<~RUBY)
+        module RuboCop
+          module Cop
+            module BufferTest
+              class Prose < Base
+                extend AutoCorrector
+
+                def on_new_investigation
+                  buffer = processed_source.markdown_document.buffer
+                  source = buffer.source
+                  position = source.index("wrld")
+                  return unless position
+
+                  range = Parser::Source::Range.new(buffer, position, position + 4)
+                  mapped = processed_source.markdown_document.processed_range(range)
+                  add_offense(mapped, message: "Use world.") do |corrector|
+                    corrector.replace(range, "world")
+                  end
+                end
+              end
+            end
+          end
+        end
+      RUBY
+      File.write(File.join(directory, ".rubocop.yml"), <<~YAML)
+        plugins:
+          - rubocop-md
+        require:
+          - ./prose.rb
+        AllCops:
+          NewCops: enable
+          SuggestExtensions: false
+        BufferTest/Prose:
+          Enabled: true
+        Style/StringLiterals:
+          EnforcedStyle: double_quotes
+      YAML
+      source = "😀 wrld\n\n> ```ruby\n> puts 'hello'\n> ```\n"
+      file = File.join(directory, "example.md")
+      File.write(file, source)
+      command = ["bundle", "exec", "rubocop", "--cache", "false", "--only",
+                 "BufferTest/Prose,Style/StringLiterals"]
+      output, status = Open3.capture2e(*command, "--format", "json", file, chdir: directory)
+      assert_equal 1, status.exitstatus, output
+      offenses = JSON.parse(output).fetch("files").first.fetch("offenses")
+      prose = offenses.find { |offense| offense.fetch("cop_name") == "BufferTest/Prose" }
+      assert_equal 3, prose.fetch("location").fetch("start_column")
+      assert_equal 1, prose.fetch("location").fetch("start_line")
+
+      expected = "😀 world\n\n> ```ruby\n> puts \"hello\"\n> ```\n"
+      2.times do
+        output, status = Open3.capture2e(*command, "-A", file, chdir: directory)
+        assert status.success?, output
+        assert_equal expected, File.read(file)
+      end
+      output, status = Open3.capture2e(*command, "-A", "--stdin", file, stdin_data: source, chdir: directory)
+      assert status.success?, output
+      assert_includes output, expected
+      refute_includes output, RuboCop::Markdown::Preprocess::MARKER
+    end
+  end
 end

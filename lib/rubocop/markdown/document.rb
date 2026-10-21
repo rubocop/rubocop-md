@@ -6,6 +6,9 @@ module RuboCop
   module Markdown
     # Original Markdown, its parsed blocks, and coordinates in the Ruby source buffer.
     class Document
+      # A deliberate prose edit mapped into the shared Ruby correction buffer.
+      class ProseRange < ::Parser::Source::Range; end
+
       attr_reader :buffer, :code_prefixes
       attr_accessor :processed_buffer
 
@@ -51,9 +54,21 @@ module RuboCop
       end
 
       def original_range(processed)
+        return processed if processed.source_buffer.equal?(buffer)
+
         range(
           processed.first_line, [processed.column - line_offset(processed.first_line), 0].max,
           processed.last_line, [processed.last_column - line_offset(processed.last_line), 0].max
+        )
+      end
+
+      def processed_range(original)
+        return original if original.source_buffer.equal?(processed_buffer)
+
+        ProseRange.new(
+          processed_buffer,
+          processed_position(original.first_line, original.column),
+          processed_position(original.last_line, original.last_column)
         )
       end
 
@@ -82,6 +97,10 @@ module RuboCop
 
       def line_offset(number)
         processed_buffer.source_line(number).length - line(number).length
+      end
+
+      def processed_position(number, column)
+        processed_buffer.line_range(number).begin_pos + line_offset(number) + column
       end
     end
   end

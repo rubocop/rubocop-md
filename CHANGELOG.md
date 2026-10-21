@@ -2,6 +2,7 @@
 
 ## master (unreleased)
 
+- Preserve the original Markdown buffer for prose plugins and combine original-source edits with Ruby snippet corrections ([#55](https://github.com/rubocop/rubocop-md/pull/55), [@dblock][], [@Copilot][]).
 - Replace standalone regex-based snippet extraction with a reusable Markdown document parser, supporting tilde fences, indented code, and code blocks inside lists and blockquotes while preserving their source prefixes during autocorrection ([#51](https://github.com/rubocop/rubocop-md/pull/51), [@dblock][], [@Copilot][]).
 - Fix false indentation offenses in and after list-nested code blocks ([#28](https://github.com/rubocop/rubocop-md/issues/28), [#51](https://github.com/rubocop/rubocop-md/pull/51), [@dblock][], [@Copilot][]).
 
