@@ -80,5 +80,5 @@ Style/FrozenStringLiteralComment:
   <<: *markdown_excludes
 
 Layout/LineLength:
-  IgnoredPatterns:
+  AllowedPatterns:
     - !ruby/regexp /^\#/
