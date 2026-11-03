@@ -27,6 +27,13 @@ module RuboCop
       def markdown_file?(file)
         MARKDOWN_EXTENSIONS.include?(File.extname(file))
       end
+
+      def ignored_offense?(cop_name, location)
+        return false if MARKDOWN_OFFENSE_COPS.include?(cop_name)
+        return false if location.is_a?(Document::ProseRange)
+
+        location.source_line.start_with?("##{Preprocess::MARKER}")
+      end
     end
   end
 end
@@ -41,7 +48,6 @@ RuboCop::Runner.prepend(Module.new do
 
   # Only cache markdown files if they have no offenses, 'cause cache doesn't know about processing.
   # NOTE: we should involve preprocessing in RuboCop::CachedData#deserialize_offenses
-  # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity
   def file_offense_cache(file, ...)
     if cached_run? && RuboCop::Markdown.markdown_file?(file)
       config = @config_store.for_file(file)
@@ -65,16 +71,42 @@ RuboCop::Runner.prepend(Module.new do
       super
     end
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/PerceivedComplexity
+end)
 
-  def file_finished(file, offenses, ...)
-    return super unless RuboCop::Markdown.markdown_file?(file)
+RuboCop::Cop::Base.prepend(Module.new do
+  def add_offense(node_or_range, **options, &block)
+    location = range_from_node_or_range(node_or_range)
+    return if RuboCop::Markdown.ignored_offense?(cop_name, location)
 
-    # Run Preprocess.restore if file has been autocorrected
-    if @options[:auto_correct] || @options[:autocorrect]
-      RuboCop::Markdown::Preprocess.restore_and_save!(file)
+    super
+  end
+
+  private
+
+  def range_for_original(range)
+    document = processed_source.markdown_document
+    document ? document.original_range(range) : super
+  end
+end)
+
+RuboCop::Cop::Corrector.prepend(Module.new do
+  def initialize(source)
+    processed = source.respond_to?(:processed_source) ? source.processed_source : source
+    @markdown_document = processed.markdown_document if processed.respond_to?(:markdown_document)
+    super(@markdown_document ? @markdown_document.processed_buffer : source)
+  end
+
+  def rewrite
+    @markdown_document ? @markdown_document.corrected_source(self) : super
+  end
+
+  private
+
+  def to_range(node_or_range)
+    if @markdown_document && node_or_range.is_a?(Parser::Source::Range) &&
+       node_or_range.source_buffer.equal?(@markdown_document.buffer)
+      node_or_range = @markdown_document.processed_range(node_or_range)
     end
-
     super
   end
 end)
@@ -82,13 +114,8 @@ end)
 RuboCop::Cop::Commissioner::InvestigationReport.prepend(Module.new do
   # Skip offenses reported for ignored MD source (trailing whitespaces, etc.)
   def offenses
-    @offenses ||= begin
-      marker_comment = "##{RuboCop::Markdown::Preprocess::MARKER}"
-      offenses_per_cop.flatten(1).reject do |offense|
-        next if RuboCop::Markdown::MARKDOWN_OFFENSE_COPS.include?(offense.cop_name)
-
-        offense.location.source_line.start_with?(marker_comment)
-      end
+    @offenses ||= offenses_per_cop.flatten(1).reject do |offense|
+      RuboCop::Markdown.ignored_offense?(offense.cop_name, offense.location)
     end
   end
 end)
@@ -102,10 +129,40 @@ end)
 
 # Extend ProcessedSource#parse with pre-processing
 RuboCop::ProcessedSource.prepend(Module.new do
+  attr_reader :markdown_document
+
+  def comments
+    return super unless path && RuboCop::Markdown.markdown_file?(path)
+
+    @markdown_comments ||= super.map { |comment| markdown_directive(comment) || comment }
+  end
+
   def parse(src, ...)
     # only process Markdown files
-    src = RuboCop::Markdown::Preprocess.new(path).call(src) if
-      path && RuboCop::Markdown.markdown_file?(path)
+    if path && RuboCop::Markdown.markdown_file?(path)
+      @markdown_comments = nil
+      @markdown_document = RuboCop::Markdown::Document.new(src, path)
+      src = RuboCop::Markdown::Preprocess.new(path).call(src, document: @markdown_document)
+    end
     super
+    @markdown_document.processed_buffer = @buffer if @markdown_document
+  end
+
+  private
+
+  def markdown_directive(comment)
+    return unless comment.text.start_with?("##{RuboCop::Markdown::Preprocess::MARKER}")
+
+    match = comment.text.match(
+      /(?:<!--|<span\b[^>]*>)\s*(#\s*rubocop:[^\n]*?)\s*(?:-->|<\/span>)\s*\z/
+    )
+    return unless match
+
+    location = comment.source_range
+    range = Parser::Source::Range.new(
+      location.source_buffer,
+      location.begin_pos + match.begin(1), location.begin_pos + match.end(1)
+    )
+    Parser::Source::Comment.new(range)
   end
 end)

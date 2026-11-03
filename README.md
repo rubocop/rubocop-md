@@ -12,9 +12,10 @@ Run Rubocop against your Markdown files to make sure that code examples follow s
 ## Features
 
 - Analyzes code blocks within Markdown files
-- Shows correct line numbers in output
+- Shows correct source line numbers and columns in output
 - Preserves specified language (i.e., do not try to analyze "\`\`\`sh")
 - **Supports autocorrect 📝**
+- Parses backtick and tilde fences, indented code, and code blocks inside lists and blockquotes
 
 This project was developed to keep [test-prof](https://github.com/test-prof/test-prof) guides consistent with Ruby style guide back in 2017. Since then, many popular Ruby projects adopted it, including:
 
@@ -116,9 +117,19 @@ Lint/Void:
     - '*.md'
 ```
 
-### But if I want to use inline disabling some directive like in classic RuboCop?
+### Code blocks
 
-You can use this tricks
+Markdown is parsed with Kramdown's pure-Ruby GFM parser, retaining compatibility with JRuby. Backtick and tilde fences support language tags and additional metadata, including fences longer than three characters. Code blocks inside lists and blockquotes are supported, and autocorrection preserves their Markdown prefixes even when Ruby edits add or remove lines.
+
+Indented code blocks are treated as unlabeled snippets: they are checked when `Markdown.Autodetect` is enabled and their contents parse as Ruby. Explicitly non-Ruby language tags are always ignored. `Markdown.WarnInvalid` retains its existing behavior for explicitly Ruby-tagged snippets.
+
+Leading YAML front matter, opened with `---` and closed with `---` or `...`, is excluded from snippet extraction so metadata is not mistaken for Ruby code. The original source and offense locations are preserved; unclosed headers and delimiters elsewhere remain ordinary Markdown.
+
+The original Markdown remains available through `processed_source.markdown_document.buffer` for prose plugins such as `rubocop-spellcheck`. `processed_source.buffer` retains the preprocessed Ruby source expected by Ruby cops. Prose ranges can be mapped with `markdown_document.processed_range`; diagnostics and corrections from either buffer retain their original Markdown locations and can be combined in the same run.
+
+### Disabling cops
+
+Use normal `# rubocop:disable`, `# rubocop:todo`, and `# rubocop:enable` directives inside Ruby code blocks. To disable cops across code blocks without displaying the directives in the rendered document, wrap them in hidden spans:
 
 ````md
 # my_post.md
@@ -140,19 +151,30 @@ end of snippet
 ... continuation of article ...
 ````
 
+HTML comments work too, and you can name individual cops instead of `all`:
+
+```md
+<!-- # rubocop:disable Style/EmptyMethod, Style/ArrayJoin -->
+
+Your Ruby code blocks here.
+
+<!-- # rubocop:enable Style/EmptyMethod, Style/ArrayJoin -->
+```
+
+Autocorrection preserves the HTML wrappers and does not apply corrections for disabled cops.
+
 ## How it works?
 
-- Preprocess Markdown source into Ruby source preserving line numbers
+- Parse Markdown once to identify code blocks and retain their source coordinates
+- Preprocess Ruby snippets while preserving line numbers and recording container prefixes
 - Let RuboCop do its job
-- Restore Markdown from preprocessed Ruby if it has been autocorrected
+- Map Ruby corrections back to the original Markdown, preserving indentation and list/blockquote prefixes
 
 ## Limitations
 
 - RuboCop cache is disabled for Markdown files (because cache knows nothing about preprocessing)
-- Uses naive Regexp-based approach to extract code blocks from Markdown, support only backticks-style code blocks\*
+- Code-block recognition follows Kramdown's GFM parser
 - No language detection included; if you do not specify language for your code blocks, you'd better turn `WarnInvalid` off (see above)
-
-\* It should be easy to integrate a _real_ parser (e.g. [Kramdown](https://kramdown.gettalong.org)) and handle all possible syntax. Feel free to open an issue or pull request!
 
 ## Development
 

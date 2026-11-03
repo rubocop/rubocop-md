@@ -25,6 +25,38 @@ class RuboCop::Markdown::PreprocessTest < Minitest::Test
     assert_equal expected, subject.call(source)
   end
 
+  def test_ignores_code_blocks_in_leading_front_matter
+    %w[--- ...].each do |closing|
+      source = <<~MARKDOWN
+        ---
+        example: |
+
+            puts 'indented metadata'
+
+        fenced_example: |
+          ```ruby
+          puts 'fenced metadata'
+          ```
+        #{closing}
+      MARKDOWN
+
+      [source, source.chomp, "\uFEFF#{source}".gsub("\n", "\r\n")].each do |input|
+        assert_equal input.gsub(/^/, "#<--rubocop/md-->"), subject.call(input)
+      end
+    end
+  end
+
+  def test_preserves_code_with_unclosed_or_non_initial_front_matter_delimiters
+    [
+      "---\nexample: |\n\n```ruby\nputs 'body'\n```\n",
+      "Introduction.\n\n---\n```ruby\nputs 'body'\n```\n---\n"
+    ].each do |source|
+      expected = source.gsub(/^/, "#<--rubocop/md-->").sub("#<--rubocop/md-->puts 'body'", "puts 'body'")
+
+      assert_equal expected, subject.call(source)
+    end
+  end
+
   def test_with_one_snippet
     source = <<~SOURCE
       # Header
@@ -305,5 +337,128 @@ class RuboCop::Markdown::PreprocessTest < Minitest::Test
     SOURCE
 
     assert_equal expected, subject(warn_invalid: true).call(source)
+  end
+
+  def test_tilde_and_long_fences_with_metadata
+    ["~~~", "`````"].each do |fence|
+      source = "#{fence}ruby example\nputs 'hello'\n#{fence}#{fence[0]}\n"
+      expected = "#<--rubocop/md-->#{fence}ruby example\nputs 'hello'\n" \
+                 "#<--rubocop/md-->#{fence}#{fence[0]}\n"
+
+      assert_equal expected, subject.call(source)
+    end
+  end
+
+  def test_indented_and_nested_code
+    source = <<~MARKDOWN
+      > ```ruby
+      > puts 'quoted'
+      > ```
+
+      - Example:
+
+        ~~~ruby
+        puts 'listed'
+        ~~~
+
+      # Indented
+
+          puts 'indented'
+    MARKDOWN
+    expected = <<~MARKDOWN
+      #<--rubocop/md-->> ```ruby
+      puts 'quoted'
+      #<--rubocop/md-->> ```
+      #<--rubocop/md-->
+      #<--rubocop/md-->- Example:
+      #<--rubocop/md-->
+      #<--rubocop/md-->  ~~~ruby
+      puts 'listed'
+      #<--rubocop/md-->  ~~~
+      #<--rubocop/md-->
+      #<--rubocop/md--># Indented
+      #<--rubocop/md-->
+      puts 'indented'
+    MARKDOWN
+
+    assert_equal expected, subject.call(source)
+  end
+
+  def test_autodetect_can_disable_unlabeled_and_indented_code
+    source = "```\nputs 1\n```\n\n    puts 2\n"
+    processor = subject
+    processor.define_singleton_method(:autodetect?) { false }
+
+    assert_equal source.gsub(/^/, "#<--rubocop/md-->"), processor.call(source)
+  end
+
+  def test_does_not_extract_fences_inside_html_or_non_ruby_code
+    source = "<div>\n```ruby\nputs 1\n```\n</div>\n\n" \
+             "````markdown\n```ruby\nputs 2\n```\n````\n"
+
+    assert_equal source.gsub(/^/, "#<--rubocop/md-->"), subject.call(source)
+  end
+
+  def test_line_inserting_corrections_restore_container_prefixes
+    source = "> ```ruby\n> values = [1, 2]\n> ```\n"
+    processed = RuboCop::ProcessedSource.new(source, RuboCop::TargetRuby::DEFAULT_VERSION, "test.md")
+    corrector = RuboCop::Cop::Corrector.new(processed)
+    corrector.replace(processed.ast.children.last.source_range, "[\n  1,\n  2\n]")
+
+    assert_equal "> ```ruby\n> values = [\n>   1,\n>   2\n> ]\n> ```\n", corrector.rewrite
+  end
+
+  def test_line_deleting_corrections_restore_container_prefixes
+    source = "- Example:\n\n  ```ruby\n  values = [\n    1,\n    2\n  ]\n  ```\n"
+    processed = RuboCop::ProcessedSource.new(source, RuboCop::TargetRuby::DEFAULT_VERSION, "test.md")
+    corrector = RuboCop::Cop::Corrector.new(processed)
+    corrector.replace(processed.ast.children.last.source_range, "[1, 2]")
+
+    assert_equal "- Example:\n\n  ```ruby\n  values = [1, 2]\n  ```\n", corrector.rewrite
+  end
+
+  def test_autodetect_preserves_heredoc_line_boundaries
+    source = "```\nmessage = <<~TEXT\nhello\nTEXT\n```\n"
+    expected = "#<--rubocop/md-->```\nmessage = <<~TEXT\nhello\nTEXT\n#<--rubocop/md-->```\n"
+
+    assert_equal expected, subject.call(source)
+  end
+
+  def test_document_reuses_one_parse
+    parser = RuboCop::Markdown::Parser
+    original = parser.method(:parse)
+    calls = 0
+    parse = lambda do |*args|
+      calls += 1
+      original.call(*args)
+    end
+    parser.stub(:parse, parse) do
+      processed = RuboCop::ProcessedSource.new("```ruby\nputs 1\n```\n", 2.7, "test.md")
+      2.times { processed.markdown_document.code_blocks.to_a }
+    end
+
+    assert_equal 1, calls
+  end
+
+  def test_processed_source_preserves_markdown_buffer_and_maps_each_range_once
+    source = "😀 wrld\n\n> ```ruby\n> puts 'hello'\n> ```\n"
+    processed = RuboCop::ProcessedSource.new(source, 2.7, "test.md")
+    document = processed.markdown_document
+
+    assert_equal source, document.buffer.source
+    assert_same document.processed_buffer, processed.buffer
+    assert_same processed.ast.source_range.source_buffer, processed.buffer
+    original = document.range(1, 2, 1, 6)
+    assert_same original, document.original_range(original)
+    assert_equal original, document.original_range(document.processed_range(original))
+    ruby = processed.ast.source_range
+    assert_same ruby, document.processed_range(ruby)
+    assert_equal "puts 'hello'", document.original_range(ruby).source
+
+    corrector = RuboCop::Cop::Corrector.new(processed)
+    corrector.replace(original, "world")
+    corrector.replace(processed.ast.children.last.source_range, '"world"')
+    expected = "😀 world\n\n> ```ruby\n> puts \"world\"\n> ```\n"
+    assert_equal expected, corrector.rewrite
   end
 end

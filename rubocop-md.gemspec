@@ -32,6 +32,8 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency 'lint_roller', '~> 1.1'
   spec.add_runtime_dependency "rubocop", ">= 1.72.1"
+  spec.add_runtime_dependency "kramdown", "~> 2.4"
+  spec.add_runtime_dependency "kramdown-parser-gfm", "~> 1.1"
 
   spec.add_development_dependency "bundler", ">= 1.15"
   spec.add_development_dependency "rake", ">= 13.0"
