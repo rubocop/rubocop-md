@@ -60,6 +60,37 @@ class RuboCop::Markdown::OffenseTest < RuboCop::Markdown::Test
     MARKDOWN
   end
 
+  def test_front_matter_preserves_original_offense_locations_and_corrections
+    %w[--- ...].each do |closing|
+      assert_offense(<<~MARKDOWN)
+        ---
+        title: "\u{1f600}"
+        example: |
+
+            puts 'metadata'
+        #{closing}
+
+        > ```ruby
+        > puts 'body'
+               ^^^^^^ Style/StringLiterals: Prefer double-quoted strings unless you need single quotes to avoid extra backslashes for escaping.
+        > ```
+      MARKDOWN
+
+      assert_correction(<<~MARKDOWN)
+        ---
+        title: "\u{1f600}"
+        example: |
+
+            puts 'metadata'
+        #{closing}
+
+        > ```ruby
+        > puts "body"
+        > ```
+      MARKDOWN
+    end
+  end
+
   def test_multiple_snippets
     assert_offense(<<~MARKDOWN)
       # Custom RuboCop Cops

@@ -123,6 +123,8 @@ Markdown is parsed with Kramdown's pure-Ruby GFM parser, retaining compatibility
 
 Indented code blocks are treated as unlabeled snippets: they are checked when `Markdown.Autodetect` is enabled and their contents parse as Ruby. Explicitly non-Ruby language tags are always ignored. `Markdown.WarnInvalid` retains its existing behavior for explicitly Ruby-tagged snippets.
 
+Leading YAML front matter, opened with `---` and closed with `---` or `...`, is excluded from snippet extraction so metadata is not mistaken for Ruby code. The original source and offense locations are preserved; unclosed headers and delimiters elsewhere remain ordinary Markdown.
+
 The original Markdown remains available through `processed_source.markdown_document.buffer` for prose plugins such as `rubocop-spellcheck`. `processed_source.buffer` retains the preprocessed Ruby source expected by Ruby cops. Prose ranges can be mapped with `markdown_document.processed_range`; diagnostics and corrections from either buffer retain their original Markdown locations and can be combined in the same run.
 
 ### Disabling cops

@@ -25,6 +25,38 @@ class RuboCop::Markdown::PreprocessTest < Minitest::Test
     assert_equal expected, subject.call(source)
   end
 
+  def test_ignores_code_blocks_in_leading_front_matter
+    %w[--- ...].each do |closing|
+      source = <<~MARKDOWN
+        ---
+        example: |
+
+            puts 'indented metadata'
+
+        fenced_example: |
+          ```ruby
+          puts 'fenced metadata'
+          ```
+        #{closing}
+      MARKDOWN
+
+      [source, source.chomp, "\uFEFF#{source}".gsub("\n", "\r\n")].each do |input|
+        assert_equal input.gsub(/^/, "#<--rubocop/md-->"), subject.call(input)
+      end
+    end
+  end
+
+  def test_preserves_code_with_unclosed_or_non_initial_front_matter_delimiters
+    [
+      "---\nexample: |\n\n```ruby\nputs 'body'\n```\n",
+      "Introduction.\n\n---\n```ruby\nputs 'body'\n```\n---\n"
+    ].each do |source|
+      expected = source.gsub(/^/, "#<--rubocop/md-->").sub("#<--rubocop/md-->puts 'body'", "puts 'body'")
+
+      assert_equal expected, subject.call(source)
+    end
+  end
+
   def test_with_one_snippet
     source = <<~SOURCE
       # Header
