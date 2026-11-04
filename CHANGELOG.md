@@ -2,6 +2,7 @@
 
 ## master (unreleased)
 
+- Add opt-in `Markdown/Syntax` to report parser warnings as standard RuboCop offenses instead of writing them separately to stderr ([#50](https://github.com/rubocop/rubocop-md/pull/50), [@dblock][], [@Copilot][]).
 - Exclude leading YAML front matter from Ruby snippet extraction without changing the original source or offense locations ([#57](https://github.com/rubocop/rubocop-md/pull/57), [@dblock][], [@Copilot][]).
 - Preserve the original Markdown buffer for prose plugins and combine original-source edits with Ruby snippet corrections ([#55](https://github.com/rubocop/rubocop-md/pull/55), [@dblock][], [@Copilot][]).
 - Replace standalone regex-based snippet extraction with a reusable Markdown document parser, supporting tilde fences, indented code, and code blocks inside lists and blockquotes while preserving their source prefixes during autocorrection ([#51](https://github.com/rubocop/rubocop-md/pull/51), [@dblock][], [@Copilot][]).

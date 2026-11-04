@@ -49,6 +49,10 @@ module RuboCop
         rewriter.process
       end
 
+      def warnings
+        parsed.last
+      end
+
       def line(number)
         buffer.source_line(number)
       end
@@ -83,11 +87,11 @@ module RuboCop
       private
 
       def root
-        @root ||= begin
-          root, warnings = Markdown::Parser.parse(buffer.source, hard_wrap: false)
-          warnings.each { |warning| warn "rubocop-md: #{warning}" }
-          root
-        end
+        parsed.first
+      end
+
+      def parsed
+        @parsed ||= Markdown::Parser.parse(buffer.source, hard_wrap: false)
       end
 
       def walk(node, &block)

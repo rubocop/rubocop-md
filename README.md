@@ -127,6 +127,21 @@ Leading YAML front matter, opened with `---` and closed with `---` or `...`, is 
 
 The original Markdown remains available through `processed_source.markdown_document.buffer` for prose plugins such as `rubocop-spellcheck`. `processed_source.buffer` retains the preprocessed Ruby source expected by Ruby cops. Prose ranges can be mapped with `markdown_document.processed_range`; diagnostics and corrections from either buffer retain their original Markdown locations and can be combined in the same run.
 
+### Markdown syntax diagnostics
+
+Enable `Markdown/Syntax` in `.rubocop.yml` to report Kramdown's parser warnings through RuboCop's normal formatters:
+
+```yml
+Markdown/Syntax:
+  Enabled: true
+```
+
+This opt-in cop reports warning-severity offenses for diagnostics such as undefined references and malformed HTML. It does not provide complete Markdown validation or autocorrection. Multiple warnings on the same line are combined into one offense; warnings without a usable location are reported at the start of the file. Normal cop configuration, `--except`, and inline disabling directives apply.
+
+Parser warnings are no longer printed separately to stderr. With `Markdown/Syntax` disabled, they are not reported; enabling it can make previously non-blocking parser warnings fail lint. `Markdown.WarnInvalid` continues to control invalid Ruby snippets independently.
+
+For Markdown style and prose checks, use [rubocop-prose](https://github.com/dblock/rubocop-prose).
+
 ### Disabling cops
 
 Use normal `# rubocop:disable`, `# rubocop:todo`, and `# rubocop:enable` directives inside Ruby code blocks. To disable cops across code blocks without displaying the directives in the rendered document, wrap them in hidden spans:
