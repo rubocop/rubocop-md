@@ -7,6 +7,12 @@ Markdown:
   WarnInvalid: true
   Autodetect: true
 
+Markdown/Syntax:
+  Description: "Report Markdown parser warnings as offenses."
+  Enabled: false
+  Severity: warning
+  VersionAdded: "2.1"
+
 # Keep in sync with MARKDOWN_EXTENSIONS
 Layout/CommentIndentation: &markdown_excludes
   Exclude:

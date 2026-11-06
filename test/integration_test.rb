@@ -132,6 +132,35 @@ class RuboCop::Markdown::AnalyzeTest < Minitest::Test
     end
   end
 
+  def test_markdown_syntax_uses_standard_formatting_and_can_be_disabled
+    Dir.mktmpdir("rubocop-md") do |directory|
+      config = File.join(directory, ".rubocop.yml")
+      loading = ENV["MD_LOAD_MODE"] == "options" ? "" : "plugins:\n  - rubocop-md\n"
+      File.write(config, <<~YAML)
+        #{loading}AllCops:
+          DisabledByDefault: true
+          SuggestExtensions: false
+        Markdown/Syntax:
+          Enabled: true
+      YAML
+      File.write(File.join(directory, "example.md"), "[label][missing]\n")
+      arguments = ["bundle", "exec", "rubocop", "--config", config, "--cache", "false", "--format", "clang"]
+      arguments.push("--plugin", "rubocop-md") if ENV["MD_LOAD_MODE"] == "options"
+      output, errors, status = Open3.capture3(*arguments, "example.md", chdir: directory)
+
+      assert_equal 1, status.exitstatus, output
+      assert_includes output, "example.md:1:1: W: Markdown/Syntax: No link definition"
+      assert_empty errors
+
+      output, errors, status = Open3.capture3(
+        *arguments, "--except", "Markdown/Syntax", "example.md", chdir: directory
+      )
+      assert status.success?, output
+      assert_empty errors
+      assert_includes output, "no offenses detected"
+    end
+  end
+
   def test_prose_cop_can_read_and_correct_the_original_buffer_alongside_ruby_cops
     Dir.mktmpdir("rubocop-md") do |directory|
       File.write(File.join(directory, "prose.rb"), <<~RUBY)
