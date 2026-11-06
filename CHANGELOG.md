@@ -1,6 +1,6 @@
 # Change log
 
-## master (unreleased)
+## 3.0.0 (2026-11-06)
 
 - Add opt-in `Markdown/Syntax` to report parser warnings as standard RuboCop offenses instead of writing them separately to stderr ([#50](https://github.com/rubocop/rubocop-md/pull/50), [@dblock][], [@Copilot][]).
 - Exclude leading YAML front matter from Ruby snippet extraction without changing the original source or offense locations ([#57](https://github.com/rubocop/rubocop-md/pull/57), [@dblock][], [@Copilot][]).
